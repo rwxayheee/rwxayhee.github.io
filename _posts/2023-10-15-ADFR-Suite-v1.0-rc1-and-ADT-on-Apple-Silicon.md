@@ -11,7 +11,7 @@ image: ADFR-tutorial-test.jpg
 
 This post is a guide to **setting up a Linux [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine) with desktop on Mac computers with [Apple Silicon (M1/M2)](https://en.wikipedia.org/wiki/Apple_silicon)**, for the purpose of **installing and running the [x86_64](https://en.wikipedia.org/wiki/X86-64) programs in the [ADFR suite](https://ccsb.scripps.edu/adfr/)** and [AutoDockTools (ADT)](https://autodocksuite.scripps.edu/adt/) on such devices. 
 
-**Apple Silicon uses the [ARM64](https://en.wikipedia.org/wiki/AArch64) architechture**. Programs that were not built in this architecture cannot be run directly on Macs with Apple Silicon. At present, a common solution to the mismatch of architectures is **[Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)), a compatibility layer** that translates software that were built for Intel processors so that they could be run on Apple Silicon. While in some situations, having a Linux VM with Rosetta emulation (*not to set up *a whole emulator*) to run the x86_64 programs may be useful, when: 
+**Apple Silicon uses the [ARM64](https://en.wikipedia.org/wiki/AArch64) architechture**. Programs that were not built in this architecture cannot be run directly on Macs with Apple Silicon. At present, a common solution to the mismatch of architectures is **[Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)), a compatibility layer** that translates software that were built for Intel processors so that they could be run on Apple Silicon. While in some situations, having a Linux VM with Rosetta emulation (not to set up a *whole emulator*) to run the x86_64 programs may be useful, when: 
 
 (1) The program is currently **lacking ARM64 support**, 
 
@@ -47,9 +47,9 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
   + [Register Rosetta using update-binfmts](#register-rosetta-using-update-binfmts)
 * [Step 3: Enabling the *Multiarch* and *Multilib* Support](#step-3-enabling-the-multiarch-and-multilib-support)
   + [*Multiarch*: Update /etc/apt/ources.list and add AMD64 as a foreign arch to dpkg](#multiarch-update-etcaptourceslist-and-add-amd64-as-a-foreign-arch-to-dpkg)
-  + [*Multilib*: Install specific AMD64 libraries for the ADFR suite and ADT]
-* [Step 4: Installing the ADFR Suite and MGLTools]
-  + [Make program reduce from source]
+  + [*Multilib*: Install specific AMD64 libraries for the ADFR suite and ADT](#multilib-install-specific-amd64-libraries-for-the-adfr-suite-and-adt)
+* [Step 4: Installing the ADFR Suite and MGLTools](#step-4-installing-the-adfr-suite-and-mgltools)
+  + [Make program reduce from source](#make-program-reduce-from-source)
   + [Tests with sample data]
 
 
@@ -168,7 +168,7 @@ Although very briefly summarized as just _enabling “multiarch” or “multili
 
 ### *Multiarch*: Update /etc/apt/ources.list and add AMD64 as a foreign arch to dpkg
 
-According to the instructions given in the [linked repository](https://github.com/lucyllewy/macOS-Linux-VM-with-Rosetta), update `/etc/apt/sources.list` by adding the following lines: 
+According to the instructions given in the [linked repository](https://github.com/lucyllewy/macOS-Linux-VM-with-Rosetta), update `/etc/apt/sources.list` by adding the following lines - 
 
 ```
 deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy main restricted
@@ -182,20 +182,83 @@ deb [arch=amd64] http://security.ubuntu.com/ubuntu jammy-security universe
 deb [arch=amd64] http://security.ubuntu.com/ubuntu jammy-security multiverse
 ```
 
-Next, configure Ubuntu's Debian package manager `dpkg` by adding `amd64` as a foreign architecture: 
+Next, configure Ubuntu's Debian package manager `dpkg` by adding `amd64` as a foreign architecture - 
 
 ```shell
 sudo dpkg --add-architecture amd64
 ```
 
-And finally, after all the modifications made, don't forget to update `apt`, before asking it to install the AMD64 libraries: 
+And finally, after all the modifications made, don't forget to update `apt`, before asking it to install the AMD64 libraries - 
 
 ```shell
 sudo apt update
 ```
 
 
-## Tests with sample data
+### *Multilib*: Install specific AMD64 libraries for the ADFR suite and ADT
+
+For **agfr & adfr**, the following packages seem neccessary and can be installed by - 
+
+```shell
+sudo apt-get install libc6:amd64 libsm6:amd64 libx11-dev:amd64 libxml2:amd64 libgomp1:amd64
+```
+
+With the above, you should be able to install **the ADFR suite** and run `agfr` and `adfr` normally. 
+
+For **agfrgui**, the following packages can be installed by - 
+
+```shell
+sudo apt-get install libxtst6:amd64 libgl1:amd64 libglu1:amd64 libxmu6:amd64 libxi6:amd64
+```
+
+With the above, you should be able to use `agfrgui`. At this point, you should also be able to install **MGLTools** and use `adt`. 
+
+
+
+## Step 4: Installing the ADFR Suite and MGLTools
+
+ADFR suite (v1.0 rc1 for Linux, tarball installer) - <a href="https://ccsb.scripps.edu/adfr/downloads/" target="_blank">https://ccsb.scripps.edu/adfr/downloads/</a>
+
+MGLTools (v1.5.7 for Linux) - <a href="https://ccsb.scripps.edu/mgltools/downloads/" target="_blank">https://ccsb.scripps.edu/mgltools/downloads/</a>
+
+If interested, official tutorials and data files are available for trial calculations at: 
+
+For ADFR - <a href="https://ccsb.scripps.edu/adfr/documentation/" target="_blank">https://ccsb.scripps.edu/adfr/documentation/</a> 
+
+For ADCP - <a href="https://ccsb.scripps.edu/adcp/documentation/" target="_blank">https://ccsb.scripps.edu/adcp/documentation/</a>
+
+
+
+### Make program reduce from source
+
+If you also wish to **build program reduce from source**, the following might be needed prior to the making: 
+
+```shell
+sudo apt-get install cmake
+sudo apt-get install gcc-multilib
+sudo apt-get install gcc g++
+sudo apt-get install python3-dev
+```
+
+Then, obtain the source codes from the repository for program reduce - 
+
+```shell
+git clone https://github.com/rlabduke/reduce
+```
+
+You may simply navigate to the folder `reduce`, and run the following commands to make it with the template `Makefile`. By default, the executable will be place under `~/bin` but these are all customizable with `cmake`. 
+
+```shell
+cd reduce
+make
+sudo make install
+```
+
+At this point, you should be able to complete the tasks in the ADCP tutorial with a recent version of `reduce`. 
+
+
+
+### Tests with sample data
 
 ### Motives
 
