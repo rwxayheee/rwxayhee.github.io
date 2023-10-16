@@ -17,7 +17,7 @@ This post is a guide to **setting up a Linux [virtual machine (VM)](https://en.w
 
 and, 
 
-(2) The Mac OS version/platform is for some reason (see below and more in [Motives](#motives) of this post) **not the preferred** choice, even though in theory it could be run natively on Apple Silicon with Rosetta. 
+(2) The Mac OS version and/or Mac OS as the native OS is for some reason (see below and more in [Motives](#motives) of this post) **not the preferred** choice, even though in theory it could be run natively on Apple Silicon with Rosetta. 
 
 The Mac OS version issue mainly originates from [the lack of support for 32-bit software since Mac OS Catalina](https://support.apple.com/en-us/HT208436). With that, programs with 32-bit components will not run on newer Mac OS. *Without setting up a VM*, another very elegant walkaround to this is to run the programs in [Docker](https://docs.docker.com/get-started/overview/) containers. To run [Vina & the python binding](https://github.com/ccsb-scripps/AutoDock-Vina), [Meeko](https://github.com/forlilab/Meeko), or [MGLTools](https://ccsb.scripps.edu/mgltools/) & the [ADFR suite](https://ccsb.scripps.edu/adfr/) in [Docker](https://docs.docker.com/get-started/overview/) images, please consider this user-contributed solution: 
 
@@ -37,7 +37,7 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
   + [Download UTM and the disk image (ISO file) of Ubuntu-for-ARM](#download-utm-and-the-disk-image-iso-file-of-ubuntu-for-arm)
   + [Set up the VM from UTM](#set-up-the-vm-from-utm)
   + [Install the desktop GUI for Ubuntu](#install-the-desktop-gui-for-ubuntu)
-2. [Step 2: Enabling Rosetta]
+2. [Step 2: Enabling Rosetta](#step-2-enabling-rosetta)
   1. [Make Rosetta accessible through VirtioFS]
   2. [Add Rosetta to the filesystem table fstab]
   3. [Register Rosetta using update-binfmts]
@@ -68,34 +68,49 @@ In the option tabs -
 
 * For the Boot ISO Image, Browse and Open the downloaded ISO file for Ubuntu. 
 
-* The default Hardware (about 4GB RAM, 4 cores) and half the default Storage (32 GB) may be used. Shared directories are optional (can be enabled afterwards). 
+* The default Hardware (about 4GB RAM, 4 cores) and half the default Storage (32 GB) may be used. Shared directories are optional and can be enabled later on. 
 
 * Name to your liking and Save to finish setting up the VM. Click the Play (▶︎) button to start the VM. 
 
 ### Install the desktop GUI for Ubuntu
 
-Follow the instructions in the linked video, to install the neccessary packages including the desktop GUI for our Ubuntu VM (if you like it, *consider supporting the creator, [Ksk Royal](https://www.youtube.com/@kskroyaltech)*): 
+Follow the instructions in the [linked video](https://www.youtube.com/watch?v=6mtfncj9vhU), to install the neccessary packages including the desktop GUI for our Ubuntu VM (if you like it, *consider supporting the creator, [Ksk Royal](https://www.youtube.com/@kskroyaltech)*): 
 
 <iframe width="560" height="315" src="https://www.youtube.com/watch?v=6mtfncj9vhU
 " frameborder="0" allowfullscreen></iframe>
 
-You might need the following commands in the video: 
+You might need the following commands from the video - 
 
 ```shell
-sudo apt-get update
-sudo apt-get full-upgrade
+sudo apt update
+sudo apt full-upgrade
 ```
 
-The following could take a couple of minutes: 
+The following could take a couple of minutes - 
 
 ```shell
-sudo apt-get install ubuntu-desktop^
+sudo apt install ubuntu-desktop^
 ```
 
-And finally: 
+And finally - 
 
 ```shell
 sudo reboot
+```
+
+## Step 2: Enabling Rosetta
+
+To use Rosetta in our VM, we need to (1) **Make it Accessible** by mounting, (2) **Add it to the Filesystem Configuration** so the mounting occurs automatically at startup, and (3) **Register it as an interpreter** to handle binaries with certain formats. 
+
+We will follow the instructions in the [linked UTM documentation](https://docs.getutm.app/advanced/rosetta/#enabling-rosetta) on steps to enabling Rosetta. 
+
+### Make Rosetta accessible through VirtioFS
+
+By doing the following commands, `/media/rosetta` is created to be the mount point for `rosetta` and the sharing is enabled by [VirtioFS](https://docs.getutm.app/guest-support/linux/#macos-virtiofs) -
+
+```shell
+sudo mkdir /media/rosetta
+sudo mount -t virtiofs rosetta /media/rosetta
 ```
 
 ## Tests with sample data
