@@ -262,13 +262,14 @@ At this point, you should be able to complete the tasks in the ADCP tutorial wit
 
 Here is a table of total time used to complete sample calculations in the tutorials - 
 
-ADFR's [re-docking tutorial](https://ccsb.scripps.edu/adfr/tutorial-redocking/)
+(1) ADFR's [re-docking tutorial](https://ccsb.scripps.edu/adfr/tutorial-redocking/)
 
 *Generate the target file containing the affinity maps*
 
 ```shell
 agfr -r data/4EK3_rec.pdbqt -l data/4EK4_lig.pdbqt -o ligPocket
 ```
+
 | Process printed | Time used |
 | --- | --- |
 | identifying pockets using AutoSite .... | 0.58 (sec) |
@@ -281,17 +282,19 @@ agfr -r data/4EK3_rec.pdbqt -l data/4EK4_lig.pdbqt -o ligPocket
 ```shell
 adfr -l data/4EK4_random.pdbqt -t ligPocket.trg --jobName rigid --nbRuns 8 --maxEvals 20000 -O --seed 1
 ```
+
 | Process printed | Time used |
 | --- | --- |
 | Docking performed in | 3.11 (sec) |
 
-ADCP's [re-docking tutorial](https://ccsb.scripps.edu/adcp/tutorial-redocking/)
+(2) ADCP's [re-docking tutorial](https://ccsb.scripps.edu/adcp/tutorial-redocking/)
 
 *Generate the target file containing the affinity maps*
 
 ```shell
 agfr -r 3Q47_recH.pdbqt -l 3Q47_pepH.pdbqt -asv 1.1 -o 3Q47
 ```
+
 | Process printed | Time used |
 | --- | --- |
 | identifying pockets using AutoSite .... | 2.90 (sec) |
@@ -304,6 +307,7 @@ agfr -r 3Q47_recH.pdbqt -l 3Q47_pepH.pdbqt -asv 1.1 -o 3Q47
 ```shell
 adcp -t 3Q47.trg -s npisdvd -N 20 -n 1000000 -o 3Q47_redocking -ref 3Q47_pepH.pdb
 ```
+
 | Process printed | Time used |
 | --- | --- |
 | Docking performed in | 179.30 (sec) |
