@@ -324,9 +324,8 @@ The guide is written with the hope of helping our junior students get a smooth s
 
 
 
-## Credits
-
-
-
 ## Contact
 
+Should you have any questions, comments, or suggestions, feel free to reach out by the author's institute email:
+
+he.1768@osu.edu
