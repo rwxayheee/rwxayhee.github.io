@@ -9,9 +9,9 @@ image: adfr-in-VM.jpg
 
 # Intro
 
-This post is a guide to **setting up a Linux [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine) with desktop on Mac computers with [Apple Silicon (M1/M2)](https://en.wikipedia.org/wiki/Apple_silicon)**, for the purpose of **installing and running the [x86_64](https://en.wikipedia.org/wiki/X86-64) programs in the [ADFR suite](https://ccsb.scripps.edu/adfr/)** and [AutoDockTools (ADT)](https://autodocksuite.scripps.edu/adt/) on such devices. 
+This post is a guide to **setting up a Linux [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine) with a desktop on Mac computers with [Apple Silicon (M1/M2)](https://en.wikipedia.org/wiki/Apple_silicon)**, for the purpose of **installing and running the [x86_64](https://en.wikipedia.org/wiki/X86-64) programs in the [ADFR suite](https://ccsb.scripps.edu/adfr/)** and [AutoDockTools (ADT)](https://autodocksuite.scripps.edu/adt/) on such devices. 
 
-**Apple Silicon uses the [ARM64](https://en.wikipedia.org/wiki/AArch64) architechture**. Programs that were not built in this architecture cannot be run directly on Macs with Apple Silicon. At present, a common solution to the mismatch of architectures is **[Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)), a compatibility layer** that translates software that were built for Intel processors so that they could be run on Apple Silicon. While in some situations, having a Linux VM with Rosetta emulation (not to set up a *whole emulator*) to run the x86_64 programs may be useful, when: 
+**Apple Silicon uses the [ARM64](https://en.wikipedia.org/wiki/AArch64) architecture**. Programs that were not built in this architecture cannot be run directly on Macs with Apple Silicon. At present, a common solution to the mismatch of architectures is **[Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)), a compatibility layer** that translates software that were built for Intel processors so that they could be run on Apple Silicon. While in some situations, having a Linux VM with Rosetta emulation (not to set up a *whole emulator*) to run the x86_64 programs may be useful, when: 
 
 (1) The program is currently **lacking ARM64 support**, 
 
@@ -46,7 +46,7 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
   + [Add Rosetta to the filesystem table /etc/fstab](#add-rosetta-to-the-filesystem-table-etcfstab)
   + [Register Rosetta using update-binfmts](#register-rosetta-using-update-binfmts)
 * [Step 3: Enabling the *Multiarch* and *Multilib* Support](#step-3-enabling-the-multiarch-and-multilib-support)
-  + [*Multiarch*: Update /etc/apt/ources.list and add AMD64 as a foreign arch to dpkg](#multiarch-update-etcaptourceslist-and-add-amd64-as-a-foreign-arch-to-dpkg)
+  + [*Multiarch*: Update /etc/apt/sources.list and add AMD64 as a foreign arch to dpkg](#multiarch-update-etcaptourceslist-and-add-amd64-as-a-foreign-arch-to-dpkg)
   + [*Multilib*: Install specific AMD64 libraries for the ADFR suite and ADT](#multilib-install-specific-amd64-libraries-for-the-adfr-suite-and-adt)
 * [Step 4: Installing the ADFR Suite and MGLTools](#step-4-installing-the-adfr-suite-and-mgltools)
   + [Make program reduce from source](#make-program-reduce-from-source)
@@ -56,7 +56,7 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
 
 ## Step 1: Setting up a Ubuntu VM in UTM
 
-**UTM** is a free application to create virtual machines on Mac with support for Apple Silicon. **Ubuntu** is a free & open source Linux operating system that we will be using for our VM. To begin with, we will **set up a Ubuntu VM in UTM with the desired features to enable Rosetta emulation**. 
+**UTM** is a free application to create virtual machines on Mac with support for Apple Silicon. **Ubuntu** is a free & open Linux operating system that we will be using for our VM. To begin with, we will **set up a Ubuntu VM in UTM with the desired features to enable Rosetta emulation**. 
 
 ### Download UTM and the disk image (ISO file) of Ubuntu-for-ARM
 
@@ -86,7 +86,7 @@ In the option tabs -
 
 ### Install the desktop GUI for Ubuntu
 
-Follow the instructions in the [linked video](https://www.youtube.com/watch?v=6mtfncj9vhU), to install the neccessary packages including the desktop GUI for our Ubuntu VM (if you like it, *consider supporting the creator, [Ksk Royal](https://www.youtube.com/@kskroyaltech)*): 
+Follow the instructions in the [linked video](https://www.youtube.com/watch?v=6mtfncj9vhU), to install the necessary packages including the desktop GUI for our Ubuntu VM (if you like it, *consider supporting the creator, [Ksk Royal](https://www.youtube.com/@kskroyaltech)*): 
 
 <iframe width="560" height="315" src="https://www.youtube.com/watch?v=6mtfncj9vhU
 " frameborder="0" allowfullscreen></iframe>
@@ -143,7 +143,7 @@ rosetta	/media/rosetta	virtiofs	ro,nofail	0	0
 
 ### Register Rosetta using update-binfmts
 
-To use `update-binfmts`, it might be neccessary to install `binfmt-support` first, with the following command - 
+To use `update-binfmts`, it might be necessary to install `binfmt-support` first, with the following command - 
 
 ```shell
 sudo apt-get install -y binfmt-support
@@ -158,17 +158,17 @@ sudo /usr/sbin/update-binfmts --install rosetta /media/rosetta/rosetta \
 --credentials yes --preserve no --fix-binary yes
 ```
 
-At this point, it should possible to run x86_64 executables with Rosetta if additional AMD64 libraries are not neccessary. Optionally, as instructed in [the linked post](https://mybyways.com/blog/using-rosetta-in-a-utm-linux-vm-with-docker-on-apple-silicon), you may do the Docker Test and check if Docker is able to use Rosetta to run simple x86_64 programs. 
+At this point, it should be possible to run x86_64 executables with Rosetta if additional AMD64 libraries are not necessary. Optionally, as instructed in [the linked post](https://mybyways.com/blog/using-rosetta-in-a-utm-linux-vm-with-docker-on-apple-silicon), you may do the Docker Test and check if Docker is able to use Rosetta to run simple x86_64 programs. 
 
 
 
 ## Step 3: Enabling the *Multiarch* and *Multilib* Support
 
-Although very briefly summarized as just _enabling “multiarch” or “multilib” support_ in the UTM documentation for Rosetta, it is crucial to ensure the x86_64 programs have the required AMD64 libraries and the list of libraries can be software-specific. In this step, we will first **update the list of sources** for such avaliable packages and **add AMD64 as a foreign architecture** to Ubuntu's package manager, `dpkg`. Then, we will **install the AMD64 libraries** needed by the programs in the ADFR suite and ADT. 
+Although very briefly summarized as just _enabling “multiarch” or “multilib” support_ in the UTM documentation for Rosetta, it is crucial to ensure the x86_64 programs have the required AMD64 libraries and the list of libraries can be software-specific. In this step, we will first **update the list of sources** for such available packages and **add AMD64 as a foreign architecture** to Ubuntu's package manager, `dpkg`. Then, we will **install the AMD64 libraries** needed by the programs in the ADFR suite and ADT. 
 
 
 
-### *Multiarch*: Update /etc/apt/ources.list and add AMD64 as a foreign arch to dpkg
+### *Multiarch*: Update /etc/apt/sources.list and add AMD64 as a foreign arch to dpkg
 
 According to the instructions given in the [linked repository](https://github.com/lucyllewy/macOS-Linux-VM-with-Rosetta), update `/etc/apt/sources.list` by adding the following lines - 
 
@@ -199,7 +199,7 @@ sudo apt update
 
 ### *Multilib*: Install specific AMD64 libraries for the ADFR suite and ADT
 
-For **agfr & adfr**, the following packages seem neccessary and can be installed by - 
+For **agfr & adfr**, the following packages seem necessary and can be installed by - 
 
 ```shell
 sudo apt-get install libc6:amd64 libsm6:amd64 libx11-dev:amd64 libxml2:amd64 libgomp1:amd64
@@ -250,7 +250,7 @@ Then, obtain the source codes from the repository for program reduce -
 git clone https://github.com/rlabduke/reduce
 ```
 
-You may simply navigate to the folder `reduce`, and run the following commands to make it with the template `Makefile`. By default, the executable will be place under `~/bin` but these are all customizable with `cmake`. 
+You may simply navigate to the folder `reduce`, and run the following commands to make it with the template `Makefile`. By default, the executable will be placed under `~/bin/` but these are all customizable with `cmake`. 
 
 ```shell
 cd reduce
@@ -264,7 +264,7 @@ At this point, you should be able to complete the tasks in the ADCP tutorial wit
 
 ### Tests with sample data
 
-Below is tables of total time used to complete sample calculations in the tutorials - 
+Below are tables of total time used to complete sample calculations in the tutorials - 
 
 (1) ADFR's [re-docking tutorial](https://ccsb.scripps.edu/adfr/tutorial-redocking/)
 
@@ -316,7 +316,7 @@ adcp -t 3Q47.trg -s npisdvd -N 20 -n 1000000 -o 3Q47_redocking -ref 3Q47_pepH.pd
 | --- | --- |
 | Docking performed in | 179.30 (sec) |
 
-For the above calculations, **4 cores & max. 4 GB RAM** were allocated to the VM built by the presented procedure. The device used is Apple M1 Pro. 
+For the above calculations, **4 cores & max. 4 GB RAM** were allocated to the VM built by the presented procedure. The device used is Apple M1 Pro (16-inch, 2021). 
 
 
 
