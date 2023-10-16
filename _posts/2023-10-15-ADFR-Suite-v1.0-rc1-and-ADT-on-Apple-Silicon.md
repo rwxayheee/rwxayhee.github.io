@@ -25,11 +25,15 @@ The Mac OS version issue mainly originates from [the lack of support for 32-bit 
 
 Hoping the presented guide would be some kind of complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations on Apple Silicon (check out the performance in [Tests with sample data](#tests-with-sample-data)) *in a VM*, to escape from the hustle of privacy & network settings if that cannot be changed for the native OS... 
 
+
+
 # Overview
 
 Following this guide, we will create a **[Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) VM** in **[UTM](https://mac.getutm.app/)** with a desktop that serves as the graphical user interface (GUI). The two enabled features of our VM, **Apple virtualization** and **Rosetta emulation**, will allow us to **install and run the x86_64 programs**, including *ADFR*, *AGFR*, *AGFRGUI*, and *ADCP*, from the current major version of ADFR suite (v1.0 rc1, as of October 2023), and *ADT*, from the current major version of MGLTools (v1.5.7). 
 
 The procedure generally follows the logic of the [UTM documentation on Rosetta](https://docs.getutm.app/advanced/rosetta/), with the addition of installing a desktop GUI and the specific [AMD64 (another name for x86_64)](https://en.wikipedia.org/wiki/X86-64) libraries for programs in the ADFR suite. Finally, to complete the tasks in the [ADCP tutorial](https://ccsb.scripps.edu/adcp/tutorial-redocking/), the current major version of program reduce is made from [source](https://github.com/rlabduke/reduce). 
+
+
 
 ## Table of Contents
 
@@ -41,12 +45,14 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
   + [Make Rosetta accessible through VirtioFS](#make-rosetta-accessible-through-virtiofs)
   + [Add Rosetta to the filesystem table /etc/fstab](#add-rosetta-to-the-filesystem-table-etcfstab)
   + [Register Rosetta using update-binfmts](#register-rosetta-using-update-binfmts)
-* [Step 3: Enabling the *Multiarch* and *Multilib* support]
-  + [*Multiarch*: Add AMD64 as a foreign arch to dpkg]
-  + [*Multilib*: Install specific AMD64 libraries for the ADFR suite]
-* [Step 4: Installing the ADFR suite and MGLTools]
+* [Step 3: Enabling the *Multiarch* and *Multilib* Support](#step-3-enabling-the-multiarch-and-multilib-support)
+  + [*Multiarch*: Update /etc/apt/ources.list and add AMD64 as a foreign arch to dpkg](#multiarch-update-etcaptourceslist-and-add-amd64-as-a-foreign-arch-to-dpkg)
+  + [*Multilib*: Install specific AMD64 libraries for the ADFR suite and ADT]
+* [Step 4: Installing the ADFR Suite and MGLTools]
   + [Make program reduce from source]
   + [Tests with sample data]
+
+
 
 ## Step 1: Setting up a Ubuntu VM in UTM
 
@@ -57,6 +63,8 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
 UTM (Version 4.3.5) - <a href="https://mac.getutm.app/" target="_blank">https://mac.getutm.app/</a>
 
 Ubuntu (22.04.3-live-server-arm64) - <a href="https://ubuntu.com/download/server/arm" target="_blank">https://ubuntu.com/download/server/arm</a>
+
+
 
 ### Set up the VM from UTM
 
@@ -71,6 +79,8 @@ In the option tabs -
 * The default Hardware (about 4GB RAM, 4 cores) and half the default Storage (32 GB) may be used. Shared directories are optional and can be enabled later on. 
 
 * Name to your liking and Save to finish setting up the VM. Click the Play (▶︎) button to start the VM. 
+
+
 
 ### Install the desktop GUI for Ubuntu
 
@@ -98,11 +108,15 @@ And finally -
 sudo reboot
 ```
 
+
+
 ## Step 2: Enabling Rosetta
 
 To use Rosetta in our VM, we need to (1) **Make it Accessible** by mounting, (2) **Add it to the Filesystem Configuration** so the mounting occurs automatically at startup, and (3) **Register it as an interpreter** to handle binaries with certain formats. 
 
 We will follow the instructions in the [linked UTM documentation](https://docs.getutm.app/advanced/rosetta/#enabling-rosetta) to enable Rosetta. 
+
+
 
 ### Make Rosetta accessible through VirtioFS
 
@@ -113,13 +127,18 @@ sudo mkdir /media/rosetta
 sudo mount -t virtiofs rosetta /media/rosetta
 ```
 
+
+
 ### Add Rosetta to the filesystem table /etc/fstab
 
 By adding the following line to the filesystem table `/etc/fstab`, the mounting will occur automatically during a new boot thereafter. To edit `/etc/fstab`, root access is required and you might need `sudo` and a terminal text editor to your liking. 
 
-```shell
+```
 rosetta	/media/rosetta	virtiofs	ro,nofail	0	0
 ```
+
+
+
 ### Register Rosetta using update-binfmts
 
 To use `update-binfmts`, it might be neccessary to install `binfmt-support` first, with the following command - 
@@ -137,7 +156,44 @@ sudo /usr/sbin/update-binfmts --install rosetta /media/rosetta/rosetta \
 --credentials yes --preserve no --fix-binary yes
 ```
 
-At this point, it should possible to run x86_64 executables with Rosetta if additional AMD64 libraries are not neccessary. Optionally, as instructed in [the linked post](sudo docker run -it --entrypoint /bin/sh --rm --platform amd64 alpine), you may do the Docker Test and check if Docker is able to use Rosetta to run simple x86_64 programs. 
+At this point, it should possible to run x86_64 executables with Rosetta if additional AMD64 libraries are not neccessary. Optionally, as instructed in [the linked post](https://mybyways.com/blog/using-rosetta-in-a-utm-linux-vm-with-docker-on-apple-silicon), you may do the Docker Test and check if Docker is able to use Rosetta to run simple x86_64 programs. 
+
+
+
+## Step 3: Enabling the *Multiarch* and *Multilib* Support
+
+Although very briefly summarized as just _enabling “multiarch” or “multilib” support_ in the UTM documentation for Rosetta, it is crucial to ensure the x86_64 programs have the required AMD64 libraries and the list of libraries can be software-specific. In this step, we will first **update the list of sources** for such avaliable packages and **add AMD64 as a foreign architecture** to Ubuntu's package manager, `dpkg`. Then, we will **install the AMD64 libraries** needed by the programs in the ADFR suite and ADT. 
+
+
+
+### *Multiarch*: Update /etc/apt/ources.list and add AMD64 as a foreign arch to dpkg
+
+According to the instructions given in the [linked repository](https://github.com/lucyllewy/macOS-Linux-VM-with-Rosetta), update `/etc/apt/sources.list` by adding the following lines: 
+
+```
+deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy main restricted
+deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted
+deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy universe
+deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy-updates universe
+deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy multiverse
+deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy-updates multiverse
+deb [arch=amd64] http://security.ubuntu.com/ubuntu jammy-security main restricted
+deb [arch=amd64] http://security.ubuntu.com/ubuntu jammy-security universe
+deb [arch=amd64] http://security.ubuntu.com/ubuntu jammy-security multiverse
+```
+
+Next, configure Ubuntu's Debian package manager `dpkg` by adding `amd64` as a foreign architecture: 
+
+```shell
+sudo dpkg --add-architecture amd64
+```
+
+And finally, after all the modifications made, don't forget to update `apt`, before asking it to install the AMD64 libraries: 
+
+```shell
+sudo apt update
+```
+
 
 ## Tests with sample data
 
