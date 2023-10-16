@@ -1,19 +1,12 @@
 ---
 layout: page
-title: Welcome to Lagrange!
+title: Welcome to this archive
 permalink: /about
+image: my-desktop.jpg
 ---
 
-Lagrange is a minimalist Jekyll theme. The purpose of this theme is to provide a simple, clean, content-focused blogging platform for your personal site or blog. Below you can find everything you need to get started.
+Hello traveler! I'm @rwxayheee. I’m currently a chemistry graduate student at [tOSU](https://chemistry.osu.edu/). I was born and raised in [Hangzhou](https://en.wikipedia.org/wiki/Hangzhou) from the East China. My hobbies are fictions, travel, gaming, medicinal chemistry and coding. 
 
-### Getting Started
+When I was a kid I used to love writing for fun, but never start a professional blog for myself (this really isn't one either). I created the site to post some notes that I wish to share with links & markdowns (who doesn't like copying codes). 
 
-[Getting Started]({{ site.github.url }}{% post_url 2015-10-10-getting-started %}): getting started with installing Lagrange, whether you are completely new to using Jekyll, or simply just migrating to a new Jekyll theme.
-
-### Example Content
-
-[Text and Formatting]({{ site.github.url }}{% post_url 2014-01-01-text-formatting-examples %})
-
-### Questions?
-
-This theme is completely free and open source software. You may use it however you want, as it is distributed under the [MIT License](http://choosealicense.com/licenses/mit/). If you are having any problems, any questions or suggestions, feel free to [tweet at me](https://twitter.com/intent/tweet?text=My%question%about%Lagrange%is:%&amp;via=paululele), or [file a GitHub issue](https://github.com/lenpaul/lagrange/issues/new).
+Should you have any questions, comments, or suggestions, feel free to reach out by my institute email: he.1768@osu.edu

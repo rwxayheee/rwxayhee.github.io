@@ -7,20 +7,21 @@ tags: [documentation]
 image: ADFR-tutorial-test.jpg
 ---
 
-### Motives
+# Intro
 
-The [ADFR suite](https://ccsb.scripps.edu/adfr/) is developed by the Sanner lab in the Center for Computational Structural Biology (CCSB) at Scripps Research. It has been tremendously useful for our group research in providing a set of tools to streamline, automate, and customize the docking routine. I am no longer actively involved in research projects that use AutoDockFR. However, there has been a considerable amount of unpublished work and efforts that we, together with several lab alumni, put into constructing a docking pipeline with ADFR that is specific to the biological system of our interest. 
+This post is a guide to setting up a Linux [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine) on Mac computers with [Apple Silicon (M1/M2)](https://en.wikipedia.org/wiki/Apple_silicon), in order to to install and run the [x86_64](https://en.wikipedia.org/wiki/X86-64) programs in the ADFR suite on such devices. 
 
-The guide is written with the hope of helping our junior students get a smooth start with the ADFR suite, run some interactive trial calculations before deploying their production jobs on the supercomputer center, and hopefully carry on some of our work in the future. To students who are assigned to a university-owned Mac with [Apple Silicon (M1/M2)](https://en.wikipedia.org/wiki/Mac_transition_to_Apple_silicon), having a Linux [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine) on it provides a good lot of freedom to install software they need for research. At the moment, not all programs have [ARM64](https://en.wikipedia.org/wiki/AArch64) support and can not be directly run on Macs with Apple Silicon. [Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)) is a compatibility layer that translates such software that were exclusively built in different architectures so that they could be run on Apple Silicon which is the ARM64 architecture. 
+Apple Silicon uses the [ARM64](https://en.wikipedia.org/wiki/AArch64) architechture. Programs that were not built in this architecture cannot be run directly on Macs with Apple Silicon. At present, a common solution to the mismatch of architectures is [Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)), a compatibility layer that translates software that were built for Intel processors so that they could be run on Apple Silicon. In some situations, having a Linux [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine) with Rosetta emulation to run the x86_64 programs may be useful, when: 
 
-The general idea of running [x86_64](https://en.wikipedia.org/wiki/X86-64) programs in a Linux VM with Rosetta may be useful when: 
-1. The program is currently lacking ARM64 support. 
-and,  
-2. The Mac OS version or the platform is for some reason (see above) not the preferred choice, even though in theory it could be run natively on Apple Silicon with Rosetta. 
+1. The program is currently lacking ARM64 support,  
+
+and, 
+
+2. The Mac OS version or the platform is for some reason (see [Motives](#motives) of this post) not the preferred choice, even though in theory it could be run natively on Apple Silicon with Rosetta. 
 
 To run [Vina & the python binding](https://github.com/ccsb-scripps/AutoDock-Vina), [Meeko](https://github.com/forlilab/Meeko), or [MGLTools](https://ccsb.scripps.edu/mgltools/) & the [ADFR suite](https://ccsb.scripps.edu/adfr/) in [Docker](https://docs.docker.com/get-started/overview/) images, please consider this <a href="https://github.com/Metaphorme/AutoDock-Vina-Docker" target="_blank">user-contributed solution</a>. 
 
-At present, this guide would be a complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations on Apple Silicon. 
+Hoping this guide could be a complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations on Apple Silicon (See [Tests with sample data](#)). 
 
 # Overview
 
@@ -49,13 +50,19 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
 
 **UTM** is a free application to create virtual machines on Mac with support for Apple Silicon. **Ubuntu** is a free & open source Linux operating system. To begin with, we will set up a Ubuntu VM in UTM with the desired features to enable Rosetta emulation. 
 
-## Download UTM and the disc image of Ubuntu-for-ARM
+### Download UTM and the disc image of Ubuntu-for-ARM
 
 UTM (Version 4.3.5) - <a href="https://mac.getutm.app/" target="_blank">https://mac.getutm.app/</a>
 
 Ubuntu (22.04.3-live-server-arm64) - <a href="https://ubuntu.com/download/server/arm" target="_blank">https://ubuntu.com/download/server/arm</a>
 
-## Set up the VM from UTM
+### Set up the VM from UTM
+
+### Motives
+
+The [ADFR suite](https://ccsb.scripps.edu/adfr/) is developed by the Sanner lab in the Center for Computational Structural Biology (CCSB) at Scripps Research. It has been tremendously useful for our group research in providing a set of tools to streamline, automate, and customize the docking routine. I am no longer actively involved in research projects that use AutoDockFR. However, there has been a considerable amount of unpublished work and efforts that we, together with several lab alumni, put into constructing a docking pipeline with ADFR that is specific to the biological system of our interest. 
+
+The guide is written with the hope of helping our junior students get a smooth start with the ADFR suite, run some interactive trial calculations before deploying their production jobs on the supercomputer center, and hopefully carry on some of our work in the future. To students who are assigned to a university-owned Mac with Apple Silicon, having a Linux VM on it provides a good lot of freedom to install software they need for research. 
 
 ## Credits
 
