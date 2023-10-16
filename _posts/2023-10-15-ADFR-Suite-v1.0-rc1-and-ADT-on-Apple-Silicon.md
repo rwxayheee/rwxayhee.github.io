@@ -120,7 +120,22 @@ By adding the following line to the filesystem table `/etc/fstab`, the mounting 
 ```shell
 rosetta	/media/rosetta	virtiofs	ro,nofail	0	0
 ```
+### Register Rosetta using update-binfmts
 
+To use `update-binfmts`, it might be neccessary to install `binfmt-support` first, with the following command - 
+
+```shell
+sudo apt-get install -y binfmt-support
+```
+
+Next, use `update-binfmts` to register Rosetta as a x86_64 ELF handler - 
+
+```shell
+sudo /usr/sbin/update-binfmts --install rosetta /media/rosetta/rosetta \
+--magic "\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00" \
+--mask "\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff" \
+--credentials yes --preserve no --fix-binary yes
+```
 
 ## Tests with sample data
 
