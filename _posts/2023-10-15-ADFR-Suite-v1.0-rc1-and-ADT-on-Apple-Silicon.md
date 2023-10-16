@@ -29,7 +29,7 @@ Hoping the presented guide would be some kind of complementary to the docker sol
 
 # Overview
 
-Following this guide, we will create a **[Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) VM** in **[UTM](https://mac.getutm.app/)** with a desktop that serves as the graphical user interface (GUI). The two enabled features of our VM, **Apple virtualization** and **Rosetta emulation**, will allow us to **install and run the x86_64 programs**, including *ADFR*, *AGFR*, *AGFRGUI*, and *ADCP*, from the current major version of ADFR suite (v1.0 rc1, as of October 2023), and *ADT*, from the current major version of MGLTools (v1.5.7). 
+Following this guide, we will create a **[Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) VM** in **[UTM](https://mac.getutm.app/)** with a desktop that serves as the graphical user interface (GUI). The two enabled features of our VM, **Apple virtualization** and **Rosetta emulation**, will allow us to **install and run the x86_64 programs**, including *ADFR, AGFR, AGFRGUI*, and *ADCP*, from the current major version of ADFR suite (v1.0 rc1, as of October 2023), and *ADT*, from the current major version of MGLTools (v1.5.7). 
 
 The procedure generally follows the logic of the [UTM documentation on Rosetta](https://docs.getutm.app/advanced/rosetta/), with the addition of installing a desktop GUI and the specific [AMD64 (another name for x86_64)](https://en.wikipedia.org/wiki/X86-64) libraries for programs in the ADFR suite. Finally, to complete the tasks in the [ADCP tutorial](https://ccsb.scripps.edu/adcp/tutorial-redocking/), the current major version of program reduce is made from [source](https://github.com/rlabduke/reduce). 
 
@@ -50,7 +50,7 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
   + [*Multilib*: Install specific AMD64 libraries for the ADFR suite and ADT](#multilib-install-specific-amd64-libraries-for-the-adfr-suite-and-adt)
 * [Step 4: Installing the ADFR Suite and MGLTools](#step-4-installing-the-adfr-suite-and-mgltools)
   + [Make program reduce from source](#make-program-reduce-from-source)
-  + [Tests with sample data]
+  + [Tests with sample data](#tests-with-sample-data)
 
 
 
@@ -260,12 +260,27 @@ At this point, you should be able to complete the tasks in the ADCP tutorial wit
 
 ### Tests with sample data
 
+Here is a table of time used to complete sample calculations in the tutorials - 
+
+For ADFR's [re-docking tutorial](https://ccsb.scripps.edu/adfr/tutorial-redocking/): 
+
+*Generate the target file containing the affinity maps* | 
+
+For the above calculations, 4 cores & max. 4 GB RAM were allocated to the VM built by the presented procedure. The device used is Apple M1 Pro. 
+
+
+
 ### Motives
 
 The ADFR suite is developed by the Sanner lab in the Center for Computational Structural Biology (CCSB) at Scripps Research. It has been tremendously useful for our group research in providing a set of tools to streamline, automate, and customize the docking routine. I am no longer actively involved in research projects that use AutoDockFR. However, there has been a considerable amount of unpublished work and efforts that we, together with several lab alumni, put into constructing a docking pipeline with ADFR that is specific to the biological system of our interest. 
 
-The guide is written with the hope of helping our junior students get a smooth start with the ADFR suite, run some interactive trial calculations before deploying their production jobs on the supercomputer center, and hopefully carry on some of our work in the future. To students who are assigned to a university-owned Mac with Apple Silicon, having a Linux VM on it provides a good lot of freedom to install software they need for research. 
+The guide is written with the hope of helping our junior students get a smooth start with the ADFR suite, run some interactive trial calculations before deploying their production jobs on the supercomputer center, and hopefully carry on some of our work in the future. In particular to students who are assigned to a university-owned Mac with Apple Silicon, having a Linux VM on it provides a good lot of freedom to install software they need for research. 
+
+
 
 ## Credits
 
+
+
 ## Contact
+
