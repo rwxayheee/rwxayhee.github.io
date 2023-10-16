@@ -38,8 +38,8 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
   + [Set up the VM from UTM](#set-up-the-vm-from-utm)
   + [Install the desktop GUI for Ubuntu](#install-the-desktop-gui-for-ubuntu)
 2. [Step 2: Enabling Rosetta](#step-2-enabling-rosetta)
-  1. [Make Rosetta accessible through VirtioFS]
-  2. [Add Rosetta to the filesystem table fstab]
+  1. [Make Rosetta accessible through VirtioFS](#make-rosetta-accessible-through-virtiofs)
+  2. [Add Rosetta to the filesystem table /etc/fstab](#add-rosetta-to-the-filesystem-table-etcfstab)
   3. [Register Rosetta using update-binfmts]
 3. [Enabling the *Multiarch* and *Multilib* support]
   1. [*Multiarch*: Add AMD64 as a foreign arch to dpkg]
@@ -112,6 +112,15 @@ By doing the following commands, `/media/rosetta` is created to be the mount poi
 sudo mkdir /media/rosetta
 sudo mount -t virtiofs rosetta /media/rosetta
 ```
+
+### Add Rosetta to the filesystem table /etc/fstab
+
+By adding the following line to the filesystem table `/etc/fstab`, the mounting will occur automatically during a new boot thereafter. To edit `/etc/fstab`, root access is required and you might need `sudo` and a terminal text editor to your liking. 
+
+```shell
+rosetta	/media/rosetta	virtiofs	ro,nofail	0	0
+```
+
 
 ## Tests with sample data
 
