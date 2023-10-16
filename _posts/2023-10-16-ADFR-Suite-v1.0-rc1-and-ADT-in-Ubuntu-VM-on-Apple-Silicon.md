@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "ADFR Suite v1.0 rc1 and ADT on Apple Silicon"
+title: "ADFR Suite v1.0 rc1 and ADT in Ubuntu VM on Apple Silicon"
 author: "rwxayheee"
 categories: journal
 tags: [documentation]
