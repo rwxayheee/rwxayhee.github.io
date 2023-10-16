@@ -6,7 +6,7 @@ permalink: /contact
 
 **Amy (Yiran) He**
 
-PhD Candidate | Chemistry Graduate Teaching Assistant
+PhD Candidate, Chemistry Graduate Teaching Assistant
 
 Hadad Lab
 

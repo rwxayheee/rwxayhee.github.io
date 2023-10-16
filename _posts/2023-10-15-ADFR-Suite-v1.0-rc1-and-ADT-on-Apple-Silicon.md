@@ -13,11 +13,11 @@ This post is a guide to **setting up a Linux [virtual machine (VM)](https://en.w
 
 **Apple Silicon uses the [ARM64](https://en.wikipedia.org/wiki/AArch64) architechture**. Programs that were not built in this architecture cannot be run directly on Macs with Apple Silicon. At present, a common solution to the mismatch of architectures is **[Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)), a compatibility layer** that translates software that were built for Intel processors so that they could be run on Apple Silicon. While in some situations, having a Linux VM with Rosetta emulation to run the x86_64 programs may be useful, when: 
 
-1. The program is currently lacking ARM64 support, 
+1. The program is currently **lacking ARM64 support**, 
 
 and, 
 
-2. The Mac OS version/platform is for some reason (see below and more in [Motives](#motives) of this post) not the preferred choice, even though in theory it could be run natively on Apple Silicon with Rosetta. 
+2. The Mac OS version/platform is for some reason (see below and more in [Motives](#motives) of this post) **not the preferred** choice, even though in theory it could be run natively on Apple Silicon with Rosetta. 
 
 The Mac OS version issue mainly originates from the lack of support for 32-bit software since Mac OS Catalina. With that, programs with 32-bit components will not run on newer Mac OS. Without setting up a VM, another possible & elegant walkaround to this is to run the programs in [Docker](https://docs.docker.com/get-started/overview/) containers. To run [Vina & the python binding](https://github.com/ccsb-scripps/AutoDock-Vina), [Meeko](https://github.com/forlilab/Meeko), or [MGLTools](https://ccsb.scripps.edu/mgltools/) & the [ADFR suite](https://ccsb.scripps.edu/adfr/) in [Docker](https://docs.docker.com/get-started/overview/) images, please consider this user-contributed solution: 
 
@@ -33,24 +33,24 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
 
 ## Table of Contents
 
-1. [Setting up a Ubuntu VM in UTM](#setting-up-a-ubuntu-vm-in-utm)
-  1. [Download UTM and the disc image of Ubuntu-for-ARM](#download-utm-and-the-disc-image-of-ubuntu-for-arm)
+1. [Step 1: Setting up a Ubuntu VM in UTM](#step-1-setting-up-a-ubuntu-vm-in-utm)
+  + [Download UTM and the disc image of Ubuntu-for-ARM](#download-utm-and-the-disc-image-of-ubuntu-for-arm)
   2. [Set up the VM from UTM](#set-up-the-vm-from-utm)
-  3. [Install the desktop GUI for Ubuntu (optional)](#Install-the-desktop-GUI-for-Ubuntu-(optional))
-2. [Enabling Rosetta](#Enabling-Rosetta)
-  1. [Make Rosetta accessible through VirtioFS](#Make-Rosetta-accessible-through-VirtioFS)
-  2. [Add Rosetta to the filesystem table fstab](#Add-Rosetta-to-the-filesystem-table-fstab)
-  3. [Register Rosetta using update-binfmts](#Register-Rosetta-using-update\-binfmts)
-3. [Enabling the *Multiarch* and *Multilib* support](#Enabling-the-Multiarch-and-Multilib-support)
-  1. [*Multiarch*: Add AMD64 as a foreign arch to dpkg](#Multiarch:-Add-AMD64-as-a-foreign-arch-to-dpkg)
-  2. [*Multilib*: Install specific AMD64 libraries for the ADFR suite](#Multiplib:-Install-specific-AMD64-libraries-for-the-ADFR-suite)
-4. [Installing the ADFR suite](#Installing-the-ADFR-suite)
-  1. [Make program reduce from source](#Make-program-reduce-from-source)
-  2. [Tests with sample data](#tests-with-sample-data)
+  3. [Install the desktop GUI for Ubuntu]
+2. [Step 2: Enabling Rosetta]
+  1. [Make Rosetta accessible through VirtioFS]
+  2. [Add Rosetta to the filesystem table fstab]
+  3. [Register Rosetta using update-binfmts]
+3. [Enabling the *Multiarch* and *Multilib* support]
+  1. [*Multiarch*: Add AMD64 as a foreign arch to dpkg]
+  2. [*Multilib*: Install specific AMD64 libraries for the ADFR suite]
+4. [Installing the ADFR suite]
+  1. [Make program reduce from source]
+  2. [Tests with sample data]
 
-## Setting up a Ubuntu VM in UTM
+## Step 1: Setting up a Ubuntu VM in UTM
 
-**UTM** is a free application to create virtual machines on Mac with support for Apple Silicon. **Ubuntu** is a free & open source Linux operating system. To begin with, we will set up a Ubuntu VM in UTM with the desired features to enable Rosetta emulation. 
+**UTM** is a free application to create virtual machines on Mac with support for Apple Silicon. **Ubuntu** is a free & open source Linux operating system that we will be using for our VM. To begin with, we will set up a Ubuntu VM in UTM with the desired features to enable Rosetta emulation. 
 
 ### Download UTM and the disc image of Ubuntu-for-ARM
 

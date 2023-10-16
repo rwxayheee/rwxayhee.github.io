@@ -2,8 +2,9 @@
 layout: page
 title: Welcome to this archive
 permalink: /about
-image: my-desktop.jpg
 ---
+
+![desktop of](my-desktop.jpg "rwxayheee")
 
 Hello traveler! I'm @rwxayheee. I’m currently a chemistry graduate student at [tOSU](https://chemistry.osu.edu/). I was born and raised in [Hangzhou](https://en.wikipedia.org/wiki/Hangzhou) from the East China. My hobbies are fictions, travel, gaming, medicinal chemistry and coding. 
 
