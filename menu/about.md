@@ -4,12 +4,4 @@ title: Welcome to this archive
 permalink: /about
 ---
 
-![desktop of](/rwxayheee.github.io/assets/img/my-desktop.jpg "rwxayheee")
-
-Hello traveler! I'm @rwxayheee. I’m currently a chemistry graduate student at [tOSU](https://chemistry.osu.edu/). I was born and raised in [Hangzhou](https://en.wikipedia.org/wiki/Hangzhou) from the East China. My hobbies are fictions, travel, gaming, medicinal chemistry and coding. 
-
-When I was a kid I used to love writing for fun, but never start a professional blog for myself (this really isn't one either). I created the site to post some notes that I wish to share with links & markdowns (who doesn't like copying codes XD). 
-
-Should you have any questions, comments, or suggestions, feel free to reach out by my institute email: 
-
-he.1768@osu.edu
+The website is hosted by [Github Pages](https://pages.github.com/). The website was created by forking [Lagrange](https://github.com/LeNPaul/Lagrange), *a minimalist Jekyll theme for running a personal blog or site for free through Github Pages, or on your own server*. 
