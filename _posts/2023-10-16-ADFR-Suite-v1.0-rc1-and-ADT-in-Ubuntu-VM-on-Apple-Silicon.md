@@ -4,7 +4,7 @@ title: "ADFR Suite v1.0 rc1 and ADT in Ubuntu VM on Apple Silicon"
 author: "rwxayheee"
 categories: journal
 tags: [documentation]
-image: ADFR-tutorial-test.jpg
+image: adfr-in-VM.jpg
 ---
 
 # Intro
