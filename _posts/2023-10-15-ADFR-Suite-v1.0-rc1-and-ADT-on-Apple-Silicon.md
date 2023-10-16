@@ -74,6 +74,13 @@ Name to your liking and Save to finish setting up the VM. Click the Play (▶︎
 
 ### Install the desktop GUI for Ubuntu
 
+Follow the instructions in the linked video, to install neccessary packages including the desktop GUI for our Ubuntu VM (if you like it, consider supporting the creator, [Ksk Royal](https://www.youtube.com/@kskroyaltech)): 
+
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=6mtfncj9vhU
+" frameborder="0" allowfullscreen></iframe>
+
+You might need the following commands: 
+
 
 
 ## Tests with sample data
