@@ -11,4 +11,6 @@ Hello traveler! I'm @rwxayheee. I’m currently a chemistry graduate student at 
 
 When I was a kid I used to love writing for fun, but never start a professional blog for myself (this really isn't one either). I created the site to post some notes that I wish to share with links & markdowns (who doesn't like copying codes). 
 
-Should you have any questions, comments, or suggestions, feel free to reach out by my institute email: he.1768@osu.edu
+Should you have any questions, comments, or suggestions, feel free to reach out by my institute email: 
+
+he.1768@osu.edu

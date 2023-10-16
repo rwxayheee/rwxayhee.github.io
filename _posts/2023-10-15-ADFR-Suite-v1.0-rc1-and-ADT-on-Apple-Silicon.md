@@ -11,7 +11,7 @@ image: ADFR-tutorial-test.jpg
 
 This post is a guide to **setting up a Linux [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine) with desktop on Mac computers with [Apple Silicon (M1/M2)](https://en.wikipedia.org/wiki/Apple_silicon)**, for the purpose of **installing and running the [x86_64](https://en.wikipedia.org/wiki/X86-64) programs in the [ADFR suite](https://ccsb.scripps.edu/adfr/)** and [AutoDockTools (ADT)](https://autodocksuite.scripps.edu/adt/) on such devices. 
 
-**Apple Silicon uses the [ARM64](https://en.wikipedia.org/wiki/AArch64) architechture**. Programs that were not built in this architecture cannot be run directly on Macs with Apple Silicon. At present, a common solution to the mismatch of architectures is **[Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)), a compatibility layer** that translates software that were built for Intel processors so that they could be run on Apple Silicon. While in some situations, having a Linux VM with Rosetta emulation to run the x86_64 programs may be useful, when: 
+**Apple Silicon uses the [ARM64](https://en.wikipedia.org/wiki/AArch64) architechture**. Programs that were not built in this architecture cannot be run directly on Macs with Apple Silicon. At present, a common solution to the mismatch of architectures is **[Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)), a compatibility layer** that translates software that were built for Intel processors so that they could be run on Apple Silicon. While in some situations, having a Linux VM with Rosetta emulation (*not to set up *a whole emulator*) to run the x86_64 programs may be useful, when: 
 
 (1) The program is currently **lacking ARM64 support**, 
 
@@ -33,20 +33,20 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
 
 ## Table of Contents
 
-1. [Step 1: Setting up a Ubuntu VM in UTM](#step-1-setting-up-a-ubuntu-vm-in-utm)
+* [Step 1: Setting up a Ubuntu VM in UTM](#step-1-setting-up-a-ubuntu-vm-in-utm)
   + [Download UTM and the disk image (ISO file) of Ubuntu-for-ARM](#download-utm-and-the-disk-image-iso-file-of-ubuntu-for-arm)
   + [Set up the VM from UTM](#set-up-the-vm-from-utm)
   + [Install the desktop GUI for Ubuntu](#install-the-desktop-gui-for-ubuntu)
-2. [Step 2: Enabling Rosetta](#step-2-enabling-rosetta)
-  1. [Make Rosetta accessible through VirtioFS](#make-rosetta-accessible-through-virtiofs)
-  2. [Add Rosetta to the filesystem table /etc/fstab](#add-rosetta-to-the-filesystem-table-etcfstab)
-  3. [Register Rosetta using update-binfmts]
-3. [Enabling the *Multiarch* and *Multilib* support]
-  1. [*Multiarch*: Add AMD64 as a foreign arch to dpkg]
-  2. [*Multilib*: Install specific AMD64 libraries for the ADFR suite]
-4. [Installing the ADFR suite]
-  1. [Make program reduce from source]
-  2. [Tests with sample data]
+* [Step 2: Enabling Rosetta](#step-2-enabling-rosetta)
+  + [Make Rosetta accessible through VirtioFS](#make-rosetta-accessible-through-virtiofs)
+  + [Add Rosetta to the filesystem table /etc/fstab](#add-rosetta-to-the-filesystem-table-etcfstab)
+  + [Register Rosetta using update-binfmts](#register-rosetta-using-update-binfmts)
+* [Step 3: Enabling the *Multiarch* and *Multilib* support]
+  + [*Multiarch*: Add AMD64 as a foreign arch to dpkg]
+  + [*Multilib*: Install specific AMD64 libraries for the ADFR suite]
+* [Step 4: Installing the ADFR suite and MGLTools]
+  + [Make program reduce from source]
+  + [Tests with sample data]
 
 ## Step 1: Setting up a Ubuntu VM in UTM
 
@@ -64,7 +64,7 @@ From UTM - **Create a New Virtual Machine > Virtualize > Linux**.
 
 In the option tabs - 
 
-* Check the two features: __Use Apple Virtualization, Enable Rosetta__. 
+* Turn on the two features: __Use Apple Virtualization, Enable Rosetta__. 
 
 * For the Boot ISO Image, Browse and Open the downloaded ISO file for Ubuntu. 
 
@@ -102,11 +102,11 @@ sudo reboot
 
 To use Rosetta in our VM, we need to (1) **Make it Accessible** by mounting, (2) **Add it to the Filesystem Configuration** so the mounting occurs automatically at startup, and (3) **Register it as an interpreter** to handle binaries with certain formats. 
 
-We will follow the instructions in the [linked UTM documentation](https://docs.getutm.app/advanced/rosetta/#enabling-rosetta) on steps to enabling Rosetta. 
+We will follow the instructions in the [linked UTM documentation](https://docs.getutm.app/advanced/rosetta/#enabling-rosetta) to enable Rosetta. 
 
 ### Make Rosetta accessible through VirtioFS
 
-By doing the following commands, `/media/rosetta` is created to be the mount point for `rosetta` and the sharing is enabled by [VirtioFS](https://docs.getutm.app/guest-support/linux/#macos-virtiofs) -
+By doing the following commands in Terminal, `/media/rosetta` is created to be the mount point for `rosetta` and the sharing is enabled by [VirtioFS](https://docs.getutm.app/guest-support/linux/#macos-virtiofs) -
 
 ```shell
 sudo mkdir /media/rosetta
@@ -136,6 +136,8 @@ sudo /usr/sbin/update-binfmts --install rosetta /media/rosetta/rosetta \
 --mask "\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff" \
 --credentials yes --preserve no --fix-binary yes
 ```
+
+At this point, it should possible to run x86_64 executables with Rosetta if additional AMD64 libraries are not neccessary. Optionally, as instructed in [the linked post](sudo docker run -it --entrypoint /bin/sh --rm --platform amd64 alpine), you may do the Docker Test and check if Docker is able to use Rosetta to run simple x86_64 programs. 
 
 ## Tests with sample data
 
