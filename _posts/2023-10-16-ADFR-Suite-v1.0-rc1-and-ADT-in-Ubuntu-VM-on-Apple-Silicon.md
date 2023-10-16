@@ -17,19 +17,19 @@ This post is a guide to **setting up a Linux [virtual machine (VM)](https://en.w
 
 and, 
 
-(2) The Mac OS version and/or Mac OS as the native OS is for some reason (see below and more in [Motives](#motives) of this post) **not the preferred** choice, even though in theory it could be run natively on Apple Silicon with Rosetta. 
+(2) **Mac OS** is for some reason (see below and more in [Motives](#motives) of this post) **not the preferred** choice for version of program or as the platform / native OS, even though in theory the program could be translated by Rosetta and run on Apple Silicon. 
 
-The Mac OS version issue mainly originates from [the lack of support for 32-bit software since Mac OS Catalina](https://support.apple.com/en-us/HT208436). With that, programs with 32-bit components will not run on newer Mac OS. *Without setting up a VM*, another very elegant walkaround to this is to run the programs in [Docker](https://docs.docker.com/get-started/overview/) containers. To run [Vina & the python binding](https://github.com/ccsb-scripps/AutoDock-Vina), [Meeko](https://github.com/forlilab/Meeko), or [MGLTools](https://ccsb.scripps.edu/mgltools/) & the [ADFR suite](https://ccsb.scripps.edu/adfr/) in [Docker](https://docs.docker.com/get-started/overview/) images, please consider this user-contributed solution: 
+The general issue with Mac OS mainly originates from [the lack of support for 32-bit software since Mac OS Catalina](https://support.apple.com/en-us/HT208436). With that, programs with 32-bit components will not run on newer Mac OS. *Without setting up a VM*, another very elegant walkaround to this is to run the programs in [Docker](https://docs.docker.com/get-started/overview/) containers. To run [Vina & the python binding](https://github.com/ccsb-scripps/AutoDock-Vina), [Meeko](https://github.com/forlilab/Meeko), or [MGLTools](https://ccsb.scripps.edu/mgltools/) & the [ADFR suite](https://ccsb.scripps.edu/adfr/) in [Docker](https://docs.docker.com/get-started/overview/) images, please consider this user-contributed solution: 
 
 <a href="https://github.com/Metaphorme/AutoDock-Vina-Docker" target="_blank">https://github.com/Metaphorme/AutoDock-Vina-Docker</a>
 
-Hoping the presented guide would be some kind of complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations on Apple Silicon (check out the performance in [Tests with sample data](#tests-with-sample-data)) *in a VM*, to escape from the hustle of privacy & network settings if that cannot be changed for the native OS... 
+Hoping the presented guide would be some kind of complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations (if you are unsure, check out the performance in [Tests with sample data](#tests-with-sample-data)) *in a VM*, to escape from the hustle of privacy & network settings if that cannot be changed for the native OS... 
 
 
 
 # Overview
 
-Following this guide, we will create a **[Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) VM** in **[UTM](https://mac.getutm.app/)** with a desktop that serves as the graphical user interface (GUI). The two enabled features of our VM, **Apple virtualization** and **Rosetta emulation**, will allow us to **install and run the x86_64 programs**, including *ADFR, AGFR, AGFRGUI*, and *ADCP*, from the current major version of ADFR suite (v1.0 rc1, as of October 2023), and *ADT*, from the current major version of MGLTools (v1.5.7). 
+Following this guide, we will create a **[Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) VM** in **[UTM](https://mac.getutm.app/)** with a desktop that serves as the graphical user interface (GUI). The two enabled features of our VM, **Apple virtualization** and **Rosetta emulation**, will allow us to **install and run the x86_64 programs**, including *ADFR, AGFR, AGFRGUI*, and *ADCP*, from the current major version of the **ADFR suite** (v1.0 rc1, as of October 2023), and *ADT*, from the current major version of **MGLTools** (v1.5.7). 
 
 The procedure generally follows the logic of the [UTM documentation on Rosetta](https://docs.getutm.app/advanced/rosetta/), with the addition of installing a desktop GUI and the specific [AMD64 (another name for x86_64)](https://en.wikipedia.org/wiki/X86-64) libraries for programs in the ADFR suite. Finally, to complete the tasks in the [ADCP tutorial](https://ccsb.scripps.edu/adcp/tutorial-redocking/), the current major version of program reduce is made from [source](https://github.com/rlabduke/reduce). 
 
@@ -73,6 +73,8 @@ From UTM - **Create a New Virtual Machine > Virtualize > Linux**.
 In the option tabs - 
 
 * Turn on the two features: __Use Apple Virtualization, Enable Rosetta__. 
+
+![UTM-VM-setup](/assets/img/UTM-VM-setup.jpg)
 
 * For the Boot ISO Image, Browse and Open the downloaded ISO file for Ubuntu. 
 
@@ -213,7 +215,9 @@ sudo apt-get install libxtst6:amd64 libgl1:amd64 libglu1:amd64 libxmu6:amd64 lib
 
 With the above, you should be able to use `agfrgui`. At this point, you should also be able to install **MGLTools** and use `adt`. 
 
+![agfrgui-in-VM](/assets/img/agfrgui-in-VM.jpg)
 
+![adt-in-VM](/assets/img/adt-in-VM.jpg)
 
 ## Step 4: Installing the ADFR Suite and MGLTools
 
