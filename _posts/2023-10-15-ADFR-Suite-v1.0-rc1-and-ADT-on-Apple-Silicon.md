@@ -23,7 +23,7 @@ The Mac OS version issue mainly originates from [the lack of support for 32-bit 
 
 <a href="https://github.com/Metaphorme/AutoDock-Vina-Docker" target="_blank">https://github.com/Metaphorme/AutoDock-Vina-Docker</a>
 
-Hoping the presented guide would be some kind of complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations on Apple Silicon (check out the performance in [Tests with sample data](#tests-with-sample-data)) **in a VM**, to escape from the hustle of privacy & network settings if that cannot be changed for the native OS... 
+Hoping the presented guide would be some kind of complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations on Apple Silicon (check out the performance in [Tests with sample data](#tests-with-sample-data)) *in a VM*, to escape from the hustle of privacy & network settings if that cannot be changed for the native OS... 
 
 # Overview
 
@@ -50,7 +50,7 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
 
 ## Step 1: Setting up a Ubuntu VM in UTM
 
-**UTM** is a free application to create virtual machines on Mac with support for Apple Silicon. **Ubuntu** is a free & open source Linux operating system that we will be using for our VM. To begin with, we will set up a Ubuntu VM in UTM with the desired features to enable Rosetta emulation. 
+**UTM** is a free application to create virtual machines on Mac with support for Apple Silicon. **Ubuntu** is a free & open source Linux operating system that we will be using for our VM. To begin with, we will **set up a Ubuntu VM in UTM with the desired features to enable Rosetta emulation**. 
 
 ### Download UTM and the disk image (ISO file) of Ubuntu-for-ARM
 
@@ -64,24 +64,39 @@ From UTM - **Create a New Virtual Machine > Virtualize > Linux**.
 
 In the option tabs - 
 
-Check two features: **Use Apple Virtualization, Enable Rosetta **. 
+* Check the two features: __Use Apple Virtualization, Enable Rosetta__. 
 
-For the Boot ISO Image, Browse and Open the downloaded ISO file for Ubuntu. 
+* For the Boot ISO Image, Browse and Open the downloaded ISO file for Ubuntu. 
 
-The default Hardware (about 4GB RAM, 4 cores) and half the default Storage (32 GB) may be used. Shared directories are optional (can be enabled afterwards). 
+* The default Hardware (about 4GB RAM, 4 cores) and half the default Storage (32 GB) may be used. Shared directories are optional (can be enabled afterwards). 
 
-Name to your liking and Save to finish setting up the VM. Click the Play (▶︎) button to start the VM. 
+* Name to your liking and Save to finish setting up the VM. Click the Play (▶︎) button to start the VM. 
 
 ### Install the desktop GUI for Ubuntu
 
-Follow the instructions in the linked video, to install neccessary packages including the desktop GUI for our Ubuntu VM (if you like it, consider supporting the creator, [Ksk Royal](https://www.youtube.com/@kskroyaltech)): 
+Follow the instructions in the linked video, to install the neccessary packages including the desktop GUI for our Ubuntu VM (if you like it, *consider supporting the creator, [Ksk Royal](https://www.youtube.com/@kskroyaltech)*): 
 
 <iframe width="560" height="315" src="https://www.youtube.com/watch?v=6mtfncj9vhU
 " frameborder="0" allowfullscreen></iframe>
 
-You might need the following commands: 
+You might need the following commands in the video: 
 
+```shell
+sudo apt-get update
+sudo apt-get full-upgrade
+```
 
+The following could take a couple of minutes: 
+
+```shell
+sudo apt-get install ubuntu-desktop^
+```
+
+And finally: 
+
+```shell
+sudo reboot
+```
 
 ## Tests with sample data
 
