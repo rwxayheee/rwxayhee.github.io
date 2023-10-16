@@ -8,7 +8,7 @@ permalink: /contact
 
 PhD Candidate, Chemistry Graduate Teaching Assistant
 
-Hadad Lab
+[Hadad Lab](https://research.cbc.osu.edu/hadad.1)
 
 Ohio State University
 

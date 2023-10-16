@@ -19,24 +19,24 @@ and,
 
 (2) The Mac OS version/platform is for some reason (see below and more in [Motives](#motives) of this post) **not the preferred** choice, even though in theory it could be run natively on Apple Silicon with Rosetta. 
 
-The Mac OS version issue mainly originates from the lack of support for 32-bit software since Mac OS Catalina. With that, programs with 32-bit components will not run on newer Mac OS. Without setting up a VM, another possible & elegant walkaround to this is to run the programs in [Docker](https://docs.docker.com/get-started/overview/) containers. To run [Vina & the python binding](https://github.com/ccsb-scripps/AutoDock-Vina), [Meeko](https://github.com/forlilab/Meeko), or [MGLTools](https://ccsb.scripps.edu/mgltools/) & the [ADFR suite](https://ccsb.scripps.edu/adfr/) in [Docker](https://docs.docker.com/get-started/overview/) images, please consider this user-contributed solution: 
+The Mac OS version issue mainly originates from [the lack of support for 32-bit software since Mac OS Catalina](https://support.apple.com/en-us/HT208436). With that, programs with 32-bit components will not run on newer Mac OS. *Without setting up a VM*, another very elegant walkaround to this is to run the programs in [Docker](https://docs.docker.com/get-started/overview/) containers. To run [Vina & the python binding](https://github.com/ccsb-scripps/AutoDock-Vina), [Meeko](https://github.com/forlilab/Meeko), or [MGLTools](https://ccsb.scripps.edu/mgltools/) & the [ADFR suite](https://ccsb.scripps.edu/adfr/) in [Docker](https://docs.docker.com/get-started/overview/) images, please consider this user-contributed solution: 
 
 <a href="https://github.com/Metaphorme/AutoDock-Vina-Docker" target="_blank">https://github.com/Metaphorme/AutoDock-Vina-Docker</a>
 
-Hoping this guide would be some kind of complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations on Apple Silicon (check out the performance in [Tests with sample data](#tests-with-sample-data)) in a VM, to escape from the hustle of privacy & network settings if that cannot be changed for the native OS... 
+Hoping the presented guide would be some kind of complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations on Apple Silicon (check out the performance in [Tests with sample data](#tests-with-sample-data)) **in a VM**, to escape from the hustle of privacy & network settings if that cannot be changed for the native OS... 
 
 # Overview
 
-Following this guide, we will create a **[Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) VM** in **[UTM](https://mac.getutm.app/)** with a desktop that serves as the graphical user interface (GUI). The two enabled features of our VM, **Apple virtualization** and **Rosetta emulation**, will allow us to **install and run the x86_64 programs**, including *ADFR*, *AGFR*, *AGFRGUI*, and *ADCP*, from the current major version of ADFR suite (v1.0 rc1, as of October 2023), and *ADT*, from the current major version of MGLTools (1.5.7). 
+Following this guide, we will create a **[Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) VM** in **[UTM](https://mac.getutm.app/)** with a desktop that serves as the graphical user interface (GUI). The two enabled features of our VM, **Apple virtualization** and **Rosetta emulation**, will allow us to **install and run the x86_64 programs**, including *ADFR*, *AGFR*, *AGFRGUI*, and *ADCP*, from the current major version of ADFR suite (v1.0 rc1, as of October 2023), and *ADT*, from the current major version of MGLTools (v1.5.7). 
 
 The procedure generally follows the logic of the [UTM documentation on Rosetta](https://docs.getutm.app/advanced/rosetta/), with the addition of installing a desktop GUI and the specific [AMD64 (another name for x86_64)](https://en.wikipedia.org/wiki/X86-64) libraries for programs in the ADFR suite. Finally, to complete the tasks in the [ADCP tutorial](https://ccsb.scripps.edu/adcp/tutorial-redocking/), the current major version of program reduce is made from [source](https://github.com/rlabduke/reduce). 
 
 ## Table of Contents
 
 1. [Step 1: Setting up a Ubuntu VM in UTM](#step-1-setting-up-a-ubuntu-vm-in-utm)
-  + [Download UTM and the disc image of Ubuntu-for-ARM](#download-utm-and-the-disc-image-of-ubuntu-for-arm)
-  2. [Set up the VM from UTM](#set-up-the-vm-from-utm)
-  3. [Install the desktop GUI for Ubuntu]
+  + [Download UTM and the disk image (ISO file) of Ubuntu-for-ARM](#download-utm-and-the-disk-image-iso-file-of-ubuntu-for-arm)
+  + [Set up the VM from UTM](#set-up-the-vm-from-utm)
+  + [Install the desktop GUI for Ubuntu](#install-the-desktop-gui-for-ubuntu)
 2. [Step 2: Enabling Rosetta]
   1. [Make Rosetta accessible through VirtioFS]
   2. [Add Rosetta to the filesystem table fstab]
@@ -52,13 +52,29 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
 
 **UTM** is a free application to create virtual machines on Mac with support for Apple Silicon. **Ubuntu** is a free & open source Linux operating system that we will be using for our VM. To begin with, we will set up a Ubuntu VM in UTM with the desired features to enable Rosetta emulation. 
 
-### Download UTM and the disc image of Ubuntu-for-ARM
+### Download UTM and the disk image (ISO file) of Ubuntu-for-ARM
 
 UTM (Version 4.3.5) - <a href="https://mac.getutm.app/" target="_blank">https://mac.getutm.app/</a>
 
 Ubuntu (22.04.3-live-server-arm64) - <a href="https://ubuntu.com/download/server/arm" target="_blank">https://ubuntu.com/download/server/arm</a>
 
 ### Set up the VM from UTM
+
+From UTM - **Create a New Virtual Machine > Virtualize > Linux**. 
+
+In the option tabs - 
+
+Check two features: **Use Apple Virtualization, Enable Rosetta **. 
+
+For the Boot ISO Image, Browse and Open the downloaded ISO file for Ubuntu. 
+
+The default Hardware (about 4GB RAM, 4 cores) and half the default Storage (32 GB) may be used. Shared directories are optional (can be enabled afterwards). 
+
+Name to your liking and Save to finish setting up the VM. Click the Play (▶︎) button to start the VM. 
+
+### Install the desktop GUI for Ubuntu
+
+
 
 ## Tests with sample data
 
