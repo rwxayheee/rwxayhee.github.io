@@ -269,19 +269,21 @@ ADFR's [re-docking tutorial](https://ccsb.scripps.edu/adfr/tutorial-redocking/)
 ```shell
 agfr -r data/4EK3_rec.pdbqt -l data/4EK4_lig.pdbqt -o ligPocket
 ```
-
-identifying pockets using AutoSite .... | 0.58 (sec)
-computing maps ... | 1.08 (sec)
-adding gradient to maps | 6.22 (sec)
-total | 7.89 (sec)
+| Process printed | Time used |
+| --- | --- |
+| identifying pockets using AutoSite .... | 0.58 (sec) |
+| computing maps ... | 1.08 (sec) |
+| adding gradient to maps | 6.22 (sec) |
+| total | 7.89 (sec) |
 
 *Dock the randomized ligand using the generated target file*
 
 ```shell
 adfr -l data/4EK4_random.pdbqt -t ligPocket.trg --jobName rigid --nbRuns 8 --maxEvals 20000 -O --seed 1
 ```
-
-Docking performed in | 3.11 (sec)
+| Process printed | Time used |
+| --- | --- |
+| Docking performed in | 3.11 (sec) |
 
 ADCP's [re-docking tutorial](https://ccsb.scripps.edu/adcp/tutorial-redocking/)
 
@@ -290,19 +292,21 @@ ADCP's [re-docking tutorial](https://ccsb.scripps.edu/adcp/tutorial-redocking/)
 ```shell
 agfr -r 3Q47_recH.pdbqt -l 3Q47_pepH.pdbqt -asv 1.1 -o 3Q47
 ```
-
-identifying pockets using AutoSite .... | 2.90 (sec)
-computing maps ... | 2.25 (sec)
-adding gradient to maps | 19.70 (sec)
-total | 23.36 (sec)
+| Process printed | Time used |
+| --- | --- |
+| identifying pockets using AutoSite .... | 2.90 (sec) |
+| computing maps ... | 2.25 (sec) |
+| adding gradient to maps | 19.70 (sec) |
+| total | 23.36 (sec) |
 
 *Dock the peptide from sequence using the generated target file*
 
 ```shell
 adcp -t 3Q47.trg -s npisdvd -N 20 -n 1000000 -o 3Q47_redocking -ref 3Q47_pepH.pdb
 ```
-
-Docking performed in | 179.30 (sec)
+| Process printed | Time used |
+| --- | --- |
+| Docking performed in | 179.30 (sec) |
 
 For the above calculations, **4 cores & max. 4 GB RAM** were allocated to the VM built by the presented procedure. The device used is Apple M1 Pro. 
 
