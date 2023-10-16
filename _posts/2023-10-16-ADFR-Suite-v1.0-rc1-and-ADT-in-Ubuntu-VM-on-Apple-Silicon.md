@@ -17,13 +17,13 @@ This post is a guide to **setting up a Linux [virtual machine (VM)](https://en.w
 
 and, 
 
-(2) **Mac OS** is for some reason (see below and more in [Motives](#motives) of this post) **not the preferred** choice for version of program or as the platform / native OS, even though in theory the program could be translated by Rosetta and run on Apple Silicon. 
+(2) **Mac OS** as the native OS is for some reason (see below and more in [Motives](#motives) of this post) **not the preferred** platform to run the program, even though in theory the program could be translated by Rosetta and run on Apple Silicon. 
 
-The general issue with Mac OS mainly originates from [the lack of support for 32-bit software since Mac OS Catalina](https://support.apple.com/en-us/HT208436). With that, programs with 32-bit components will not run on newer Mac OS. *Without setting up a VM*, another very elegant walkaround to this is to run the programs in [Docker](https://docs.docker.com/get-started/overview/) containers. To run [Vina & the python binding](https://github.com/ccsb-scripps/AutoDock-Vina), [Meeko](https://github.com/forlilab/Meeko), or [MGLTools](https://ccsb.scripps.edu/mgltools/) & the [ADFR suite](https://ccsb.scripps.edu/adfr/) in [Docker](https://docs.docker.com/get-started/overview/) images, please consider this user-contributed solution: 
+The general issue with Mac OS mainly originates from [the lack of support for 32-bit software since Mac OS Catalina](https://support.apple.com/en-us/HT208436). With that, programs with 32-bit components will not run on newer Mac OS. *Without setting up a VM*, another very elegant walkaround to this is to run the programs in [Docker](https://docs.docker.com/get-started/overview/) containers with the desired platform and architecture. To run [Vina & the python binding](https://github.com/ccsb-scripps/AutoDock-Vina), [Meeko](https://github.com/forlilab/Meeko), or [MGLTools](https://ccsb.scripps.edu/mgltools/) & the [ADFR suite](https://ccsb.scripps.edu/adfr/) in [Docker](https://docs.docker.com/get-started/overview/) images, please consider this user-contributed solution: 
 
 <a href="https://github.com/Metaphorme/AutoDock-Vina-Docker" target="_blank">https://github.com/Metaphorme/AutoDock-Vina-Docker</a>
 
-Hoping the presented guide would be some kind of complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations (if you are unsure, check out the performance in [Tests with sample data](#tests-with-sample-data)) *in a VM*, to escape from the hustle of privacy & network settings if that cannot be changed for the native OS... 
+The presented guide could be some kind of complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations (if you are unsure, check out the performance in [Tests with sample data](#tests-with-sample-data)) *in a VM*, to escape from the hustle of privacy & network settings if that cannot be changed for the native OS... 
 
 
 
@@ -31,7 +31,7 @@ Hoping the presented guide would be some kind of complementary to the docker sol
 
 Following this guide, we will create a **[Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) VM** in **[UTM](https://mac.getutm.app/)** with a desktop that serves as the graphical user interface (GUI). The two enabled features of our VM, **Apple virtualization** and **Rosetta emulation**, will allow us to **install and run the x86_64 programs**, including *ADFR, AGFR, AGFRGUI*, and *ADCP*, from the current major version of the **ADFR suite** (v1.0 rc1, as of October 2023), and *ADT*, from the current major version of **MGLTools** (v1.5.7). 
 
-The procedure generally follows the logic of the [UTM documentation on Rosetta](https://docs.getutm.app/advanced/rosetta/), with the addition of installing a desktop GUI and the specific [AMD64 (another name for x86_64)](https://en.wikipedia.org/wiki/X86-64) libraries for programs in the ADFR suite. Finally, to complete the tasks in the [ADCP tutorial](https://ccsb.scripps.edu/adcp/tutorial-redocking/), the current major version of program reduce is made from [source](https://github.com/rlabduke/reduce). 
+The procedure generally follows the logic of the [UTM documentation on Rosetta](https://docs.getutm.app/advanced/rosetta/), with the addition of installing a desktop GUI and the specific [AMD64 (another name for x86_64)](https://en.wikipedia.org/wiki/X86-64) libraries for programs in the ADFR suite. Finally, to complete the tasks in the [ADCP tutorial](https://ccsb.scripps.edu/adcp/tutorial-redocking/) the current major version of program reduce is made from [source](https://github.com/rlabduke/reduce). 
 
 
 
@@ -264,7 +264,7 @@ At this point, you should be able to complete the tasks in the ADCP tutorial wit
 
 ### Tests with sample data
 
-Here is a table of total time used to complete sample calculations in the tutorials - 
+Below is tables of total time used to complete sample calculations in the tutorials - 
 
 (1) ADFR's [re-docking tutorial](https://ccsb.scripps.edu/adfr/tutorial-redocking/)
 
@@ -324,12 +324,12 @@ For the above calculations, **4 cores & max. 4 GB RAM** were allocated to the VM
 
 The ADFR suite is developed by the Sanner lab in the Center for Computational Structural Biology (CCSB) at Scripps Research. It has been tremendously useful for our group research in providing a set of tools to streamline, automate, and customize the docking routine. I am no longer actively involved in research projects that use AutoDockFR. However, there has been a considerable amount of unpublished work and efforts that we, together with several lab alumni, put into constructing a docking pipeline with ADFR that is specific to the biological system of our interest. 
 
-The guide is written with the hope of helping our junior students get a smooth start with the ADFR suite, run some interactive trial calculations before deploying their production jobs on the supercomputer center, and hopefully carry on some of our work in the future. In particular to students who are assigned to a university-owned Mac with Apple Silicon, having a Linux VM on it provides a good lot of freedom to install software they need for research. 
+The guide is written with the hope of helping our junior students get a smooth start with the ADFR suite, run some interactive trial calculations before deploying their production jobs on the supercomputer, and hopefully carry on some of our work in the future. In particular to students who are assigned to a university-owned Mac with Apple Silicon, having a Linux VM on it provides a great lot of freedom to install software they want for research. 
 
 
 
 ## Contact
 
-Should you have any questions, comments, or suggestions, feel free to reach out by the author's institute email:
+Should you have any questions, comments, or suggestions regarding this post, feel free to reach out by the author's institute email:
 
 he.1768@osu.edu
