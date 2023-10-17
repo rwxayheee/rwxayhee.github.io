@@ -51,6 +51,7 @@ The procedure generally follows the logic of the [UTM documentation on Rosetta](
 * [Step 4: Installing the ADFR Suite and MGLTools](#step-4-installing-the-adfr-suite-and-mgltools)
   + [Make program reduce from source](#make-program-reduce-from-source)
   + [Tests with sample data](#tests-with-sample-data)
+  + [Compare with running ADCP on native Linux OS](#compare-with-running-adcp-on-native-linux-os)
 
 
 
@@ -334,7 +335,7 @@ adcp -t 3Q47.trg -s npisdvd -N 1 -n 21000000 -o 3Q47_redocking -ref 3Q47_pepH.pd
 | --- | --- |
 | 491.39 (sec) | 644.72 (sec) |
 
-*Re-docking the 7-mer*
+*Re-docking a 5-mer*
 
 ```shell
 adcp -t 3Q47.trg -s isdvd -N 1 -n 15000000 -o 3Q47_redocking -ref 3Q47_5merH.pdb
