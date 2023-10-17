@@ -23,7 +23,7 @@ The general issue with Mac OS mainly originates from [the lack of support for 32
 
 <a href="https://github.com/Metaphorme/AutoDock-Vina-Docker" target="_blank">https://github.com/Metaphorme/AutoDock-Vina-Docker</a>
 
-The presented guide could be some kind of complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations (if you are unsure, check out the performance in [Tests with sample data](#tests-with-sample-data)) *in a VM*, to escape from the hustle of privacy & network settings if that cannot be changed for the native OS... 
+The presented guide could be some kind of complementary to the docker solution, for those who wish to use the ADFR suite and perhaps run some lightweight calculations (if you are unsure, check out the performance in [Tests with sample data](#tests-with-sample-data) and [Compare with running ADCP on native Linux OS](#compare-with-running-adcp-on-native-linux-os)) *in a VM*, to escape from the hustle of privacy & network settings if that cannot be changed for the native OS... 
 
 
 
@@ -316,7 +316,39 @@ adcp -t 3Q47.trg -s npisdvd -N 20 -n 1000000 -o 3Q47_redocking -ref 3Q47_pepH.pd
 | --- | --- |
 | Docking performed in | 179.30 (sec) |
 
-For the above calculations, **4 cores & max. 4 GB RAM** were allocated to the VM built by the presented procedure. The device used is Apple M1 Pro (16-inch, 2021). 
+For the above calculations, **4 cores & max. 4 GB RAM** were allocated to the VM built by the presented procedure. The device used is **Apple M1 Pro (16-inch, 2021)**. 
+
+
+
+### Compare with running ADCP on native Linux OS
+
+Below is a bit of benchmark timing I did to compare the performance of the UTM VM to running ADCP on native Linux OS. The reference Intel hardware is **Intel(R) Xeon(R) CPU E5-2680 v4**, accessed through [the Ohio Supercomputer Center's Owens cluster](https://www.osc.edu/resources/technical_support/supercomputers/owens). 
+
+*Re-docking the 7-mer*
+
+```shell
+adcp -t 3Q47.trg -s npisdvd -N 1 -n 21000000 -o 3Q47_redocking -ref 3Q47_pepH.pdb
+```
+
+| UTM VM | Owens sinteractive |
+| --- | --- |
+| 491.39 (sec) | 644.72 (sec) |
+
+*Re-docking the 7-mer*
+
+```shell
+adcp -t 3Q47.trg -s isdvd -N 1 -n 15000000 -o 3Q47_redocking -ref 3Q47_5merH.pdb
+```
+
+| UTM VM | Owens sinteractive |
+| --- | --- |
+| 229.03 (sec) | 312.35 (sec) |
+
+*Notes*
+
+* On Owens, running the docking job through sinteractive (interactive computing) or in batch takes equal amount of time. 
+* The timing of a single GA run is generally invariant with number of cores allocated to the job. When `-N` is larger than 1, the GA runs may be distributed across several cores. If you are running it in a VM or Docker, the performance may also depend on the virtualization. 
+* The `-n` number is the upper bound of steps, so the timing may be related to, but isn’t proportional to `-n`. The timing for a single GA run is generally invariant with number of allocated cores. 
 
 
 
