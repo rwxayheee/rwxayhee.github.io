@@ -15,7 +15,7 @@ The provided example is based on an experimental structure of Spt6-Iws1(Spn1) co
 
 # Overview
 
-This post will walk you through a peptide docking project consisting of (1) docking calculation, (2) post-processing and (3) structure refinement. 
+This post will walk you through a peptide docking project consisting of (1) docking calculation with ADCP, (2) post-processing with reduce and (3) structure refinement and rescoring with Vina. 
 
 To reproduce the presented work, you must have the software dependencies: 
 + [ADFR Suite](https://ccsb.scripps.edu/adfr/downloads/) (v1.0 rc1, including `ADCP`, `reduce`, `prepare_ligand`, `prepare_receptor`)
@@ -27,6 +27,11 @@ To reproduce the presented work, you must have the software dependencies:
 * [Step 1: Docking Calculation with ADCP](#step-1-docking-calculation-with-adcp)
   + [Structure and Target Preparation](#structure-and-target-preparation)
   + [Docking Calculations](#docking-calculations)
+* [Step 2: Post-processing with reduce](#step-2-post-processing-with-reduce)
+  + [Generate Combined Structure of the Protein-Peptide Complex](#generate-combined-structure-of-the-protein-peptide-complex)
+  + [Protonate the Protein-Peptide Complex](#protonate-the-protein-peptide-complex)
+  + [Write the Updated Receptor and Peptide Ligand PDBQT File](#write-the-updated-receptor-and-peptide-ligand-pdbqt-file)
+* 
 
 ## Step 1: Docking Calculation with ADCP
 
@@ -36,13 +41,13 @@ In this step, we will perform docking calculations for a peptide from sequence `
 
 Following the steps in the [ADCP documentation](https://ccsb.scripps.edu/adcp/tutorial-redocking/), we will **generate the PDBQT files for the peptide and the receptor, and the TRG file for the receptor** - 
 
-```shell
+```s
 reduce 2xpp_iws1.pdb > 2xpp_recH.pdb;
 ```
 
 It should be noted that reduce will not protonate any of the imidazole nitrogens on HIS sidechains, unless with option `-NOFLILP` (or `-HIS` or `-BUILD`). 
 
-```shell
+```s
 reduce 2xpp_FFEIF.pdb > 2xpp_pepH.pdb;
 prepare_receptor -r 2xpp_recH.pdb -o 2xpp_recH.pdbqt;
 prepare_ligand -l 2xpp_pepH.pdb -o 2xpp_pepH.pdbqt;
@@ -67,7 +72,7 @@ def shell(cmd):
 
 Running the docking calculations with insufficient scope (number of independnt GA runs, as specified by `-N`) and depth (number of max. MCsteps, as specified by `-n`) will result in less reproducible outcomes. Here is my recipe for the presented system, which I think will produce relatively reproducible results for 5-mer to 7-mer peptides - 
 
-```shell
+```s
 #!/bin/zsh
 adcp -t 2xpp.trg -s FFEIF -N 400 -n 20000000 -o dock1 -ref 2xpp_pepH.pdb -c 40 &> dock1.log;
   
@@ -160,3 +165,64 @@ mode |  affinity  | ref. | clust. | rmsd | energy | best |
 
 From the above outputs, we should see that the top-ranked pose in Docking Calculation #3 is still consistent with the top-ranked pose in Docking Calculations #1 and #2, for having the same (fraction = 1.000) native contacts. 
 
+## Step 2: Post-processing with reduce
+
+In this step, we will work on the top-ranked binding mode obtained from Deocking Calculation #3, which was written to `dock3_ranked_1.pdbqt`. Because ADCP does not make indications on the tautomeric or protonation form of HIS (whether it is HIE/HID or HIP), the evaluation will be made in reduce on the combined structure of protein-peptide complex. The protonated complex will be the inital structure for local optimization in the next step. 
+
+### Generate Combined Structure of the Protein-Peptide Complex
+
+To begin with, we will make a combined structure of the protein-peptide compmlex, using the unprotonated protein structure `2xpp_iws1.pdb` and the top-ranked peptide binding mode `dock3_ranked_1.pdb`. This can be done with a molecule editing tool, a text editing tool or by the following Python codes - 
+
+```python
+def order_pdb(input_pdb):
+    resnum_list = []
+    resblock_dict = {}
+    #resname_dict = {}
+    with open(input_pdb,"r") as f:
+        line = f.readline()
+        while line:
+            if line[:6] in ["ATOM  "]:
+                resnum = line[22:26]
+                if resnum not in resnum_list:
+                    resnum_list.append(resnum)
+                    resblock_dict[resnum] = [line] # residues must have unique residue numbers
+                else:
+                    resblock_dict[resnum].append(line)
+            line = f.readline()
+    ordered_pdb_block = []
+    for resnum in resnum_list:
+        ordered_pdb_block += resblock_dict[resnum]
+    return ordered_pdb_block
+
+def make_complex(receptor_pdb, ligand_pdb):
+    # initialisation
+    data = []
+
+    # read receptor pdb
+    with open(receptor_pdb,"r") as f:
+        line = f.readline()
+        while line:
+            if line[:6]=="ATOM  ":
+                data.append(line)
+            line = f.readline()
+    data.append("TER\n")
+
+    # reorder atoms in ADCP output, add ligand pdb
+    data += order_pdb(ligand_pdb)
+    return data
+
+with open("complex_1.pdb","w") as fw:
+    for line in make_complex('2xpp_iws1.pdb', 'dock3_ranked_1.pdb'):
+        fw.write(line)
+    fw.write("TER\nEND\n")
+```
+
+In the above Python codes, the atoms in ADCP output file `dock3_ranked_1.pdb` are re-ordered by residue as required by reduce. Next, we will run reduce on the complex structure `complex_1.pdb` -
+
+```s
+reduce -NOFLIP complex_1.pdb > complex_1H.pdb;
+```
+
+### Protonate the Protein-Peptide Complex
+
+### Write the Updated Receptor and Peptide Ligand PDBQT File
