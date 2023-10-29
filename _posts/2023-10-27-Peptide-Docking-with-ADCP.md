@@ -351,3 +351,70 @@ Performing local search ... done.
 
 From the above outputs, we should see that Vina's [optimize](https://autodock-vina.readthedocs.io/en/latest/vina.html#vina.vina.Vina.optimize) function has improved `lig_inter` energy from `-9.087` to `-12.703`, indicating increased protein-peptide interactions after optimization. The `lig_intra` energy has also been improved from `14.634` to `-2.916`, suggesting more stable conformation of the peptide ligand. 
 
+Below is an overlay picture of the top-ranked pose, before (cyan) vs. after (magenta) the local optimization: 
+
+![opt-before-after](/assets/img/opt-before-after.jpg)
+
+It can be seen from the overlay that, the major improvement is the spacing of atoms in peptide residues I and F that were too close in the original ADCP output. 
+
+And an overlay picture of the top-ranked pose (magenta) and the position of sequence `FFEIF` in the crystal structure (cyan): 
+
+![2xpp-adcp-overlay](/assets/img/2xpp-adcp-overlay.jpg)
+
+It can be seen from the overlay that, residue I is docked at almost the native position. The last (5th) residue F is docked at a near native position, but in a different orientation, probably due to the absence of the subsequent residues. Residue E is docked to interact with a positively charged residue K in the protein receptor. In crystal structure 2XPP, the native orientation of E does not have an apparent interaction with a receptor residue. 
+
+### Compare with Docking in Vina
+
+With the protein receptor PDBQT file `complex_1H_rec.pdbqt` and the peptide ligand PDBQT file `complex_1H_pep.pdbqt`, it is also possible to perform docking with Vina in Python - 
+
+```python
+from vina import Vina
+
+v = Vina(sf_name='vina')
+
+v.set_receptor('complex_1H_rec.pdbqt')
+
+v.set_ligand_from_file('complex_1H_pep.pdbqt')
+v.compute_vina_maps(center=[20.076, 10.981, 27.791], box_size=[30, 30, 30])
+
+v.dock(exhaustiveness=32, n_poses=20)
+v.write_poses('2xpp_ligand_vina_out.pdbqt', n_poses=5, overwrite=True)
+```
+
+*Output*
+
+```s
+mode |   affinity | dist from best mode
+     | (kcal/mol) | rmsd l.b.| rmsd u.b.
+-----+------------+----------+----------
+   1       -6.518          0          0
+   2       -6.414      2.764      8.073
+   3       -6.405      2.881      7.948
+   4       -6.354       2.37      5.629
+   5       -6.352      3.707      9.795
+   6       -6.278      2.483      8.303
+   7       -6.267      2.609      7.185
+   8       -6.258      3.226      9.151
+   9       -6.255      2.494      4.451
+  10        -6.19      2.497      9.221
+  11       -6.136      2.464      5.836
+  12       -6.107      2.744      6.391
+  13       -6.077      2.758      6.186
+  14       -6.067      2.589      4.446
+  15       -6.058      2.308      8.259
+  16       -6.038      2.367      8.083
+  17       -6.035      2.718      6.809
+  18       -6.032      2.075      3.957
+  19       -6.008      2.683      5.735
+  20       -5.976      3.327      8.089
+Performing docking (random seed: -1838194651) ... 
+```
+
+After running three replicates, I found that Vina's output mode#2 (purple) is similar to ADCP's top-ranked mode (magenta) we have been working on: 
+
+![adcp-vina2-overlay](/assets/img/opt-adcp-vina2-overlay.jpg)
+
+While Vina's output mode#1 (purple) adopts a very interesting conformation, with three F residues stack on top of each other: 
+
+![adcp-vina1-overlay](/assets/img/opt-adcp-vina-overlay.jpg)
+
