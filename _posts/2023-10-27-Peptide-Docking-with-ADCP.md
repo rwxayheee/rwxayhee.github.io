@@ -102,7 +102,7 @@ Below are the standard outputs I got for the top 10 binding modes from the examp
 
 *dock1.log*
 
-````shell
+````s
 mode |  affinity  | clust. | ref. | clust. | rmsd | best | energy | best |
      | (kcal/mol) | rmsd   | rmsd |  size  | avg. | rmsd |  avg.  | run  |
 -----+------------+--------+------+--------+------+------+--------+------+
@@ -122,7 +122,7 @@ From the above outputs, we should see that compared to how it positioned in the 
 
 *dock2.log*
 
-````shell
+````s
 mode |  affinity  | clust. | ref. | clust. | rmsd | best | energy | best |
      | (kcal/mol) | rmsd   | rmsd |  size  | avg. | rmsd |  avg.  | run  |
 -----+------------+--------+------+--------+------+------+--------+------+
@@ -136,14 +136,13 @@ mode |  affinity  | clust. | ref. | clust. | rmsd | best | energy | best |
    8        -14.2     6.8     6.8      40     6.9   6.4   -13.0    21812
    9        -14.2     5.1     5.1    1107     5.4   5.1   -12.3    65626
   10        -14.1     4.1     4.1     603     4.3   3.0   -11.4    63408
-
 ````
 
 From the above outputs, we should see that the top-ranked pose in Docking Calculation #2 is highly consistent with the top-ranked pose in Docking Calculation #1, which is the reference structure here, with RMSD = 0.1. 
 
 *dock3.log*
 
-````shell
+````s
 mode |  affinity  | ref. | clust. | rmsd | energy | best |
      | (kcal/mol) | fnc  |  size  | stdv |  stdv  | run  |
 -----+------------+------+--------+------+--------+------+
