@@ -31,7 +31,9 @@ To reproduce the presented work, you must have the software dependencies:
   + [Generate Combined Structure of the Protein-Peptide Complex](#generate-combined-structure-of-the-protein-peptide-complex)
   + [Protonate the Protein-Peptide Complex](#protonate-the-protein-peptide-complex)
   + [Write the Updated Receptor and Peptide Ligand PDBQT File](#write-the-updated-receptor-and-peptide-ligand-pdbqt-file)
-* 
+* [Step 3: Local Optimization with Vina](#step-3-local-optimization-with-vina)
+  + [Rigid Receptor Local Optimization]
+  + [Flexible Receptor Local Optimization]
 
 ## Step 1: Docking Calculation with ADCP
 
@@ -309,3 +311,43 @@ from prepare_peptide_ligand import *
 with open("complex_1H_pep.pdbqt","w") as fw:
     fw.write(mode_to_pdbqt_string("complex_1H_pep.pdb"))
 ```
+
+## Step 3: Local Optimization with Vina
+
+In this step, we will use the protein receptor PDBQT file `complex_1H_rec.pdbqt` and the peptide ligand PDBQT file `complex_1H_pep.pdbqt` from the previous step and use Vina to perform local optimization. 
+
+### Rigid Receptor Local Optimization
+
+Below is the Python code to perform the local minimization based on the [Vina Documentation on Python Scripting](https://autodock-vina.readthedocs.io/en/latest/docking_python.html) - 
+
+```python
+from vina import Vina
+
+v = Vina(sf_name='vina')
+
+v.set_receptor('complex_1H_rec.pdbqt')
+
+v.set_ligand_from_file('complex_1H_pep.pdbqt')
+v.compute_vina_maps(center=[20.076, 10.981, 27.791], box_size=[30, 30, 30])
+
+# Score the current pose
+energy = v.score()
+print('Score before minimization: ', energy)
+
+# Minimized locally the current pose
+energy_minimized = v.optimize()
+print('Score after minimization : ', energy_minimized)
+v.write_pose('mode_1_minimized.pdbqt', overwrite=True)
+```
+
+*Output*
+
+```s
+Score before minimization:  [-4.133 -9.087  0.     0.     0.    14.634  4.954 14.634]
+Score after minimization :  [ -5.778 -12.703   0.      0.      0.     -2.916   6.925  -2.916]
+Computing Vina grid ... done.
+Performing local search ... done.
+```
+
+From the above outputs, we should see that Vina's [optimize](https://autodock-vina.readthedocs.io/en/latest/vina.html#vina.vina.Vina.optimize) function has improved `lig_inter` energy from `-9.087` to `-12.703`, indicating increased protein-peptide interactions after optimization. The `lig_intra` energy has also been improved from `14.634` to `-2.916`, suggesting more stable conformation of the peptide ligand. 
+
