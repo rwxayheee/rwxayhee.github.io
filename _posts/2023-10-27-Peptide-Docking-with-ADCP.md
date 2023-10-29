@@ -68,36 +68,37 @@ def shell(cmd):
 Running the docking calculations with insufficient scope (number of independnt GA runs, as specified by `-N`) and depth (number of max. MCsteps, as specified by `-n`) will result in less reproducible outcomes. Here is my recipe for the presented system, which I think will produce relatively reproducible results for 5-mer to 7-mer peptides - 
 
 ```shell
-  adcp -t receptor.trg -s FFEIF -N 400 -n 20000000 -o dock1 -ref 2xpp_pepH.pdb -c 40 &> dock1.log;
+#!/bin/zsh
+adcp -t 2xpp.trg -s FFEIF -N 400 -n 20000000 -o dock1 -ref 2xpp_pepH.pdb -c 40 &> dock1.log;
   
-  adcp -t receptor.trg -s FFEIF -N 400 -n 20000000 -o dock2 -ref dock1_ranked_1.pdb -c 40 &> dock2.log;
+adcp -t 2xpp.trg -s FFEIF -N 400 -n 20000000 -o dock2 -ref dock1_ranked_1.pdb -c 40 &> dock2.log;
 
-  dock1_rank="$(grep -m1 "| ref. |" dock1.log -a3 | tail -n1)";
-  S1="$(echo "${dock1_rank}" | awk '{split($0,a," "); print a[2]}')";
-  s1=$((S1));
-  dock2_rank="$(grep -m1 "| ref. |" dock2.log -a3 | tail -n1)";
-  S2="$(echo "${dock2_rank}" | awk '{split($0,b," "); print b[2]}')";
-  s2=$((S2));
+dock1_rank="$(grep -m1 "| ref. |" dock1.log -a3 | tail -n1)";
+S1="$(echo "${dock1_rank}" | awk '{split($0,a," "); print a[2]}')";
+s1=$((S1));
+dock2_rank="$(grep -m1 "| ref. |" dock2.log -a3 | tail -n1)";
+S2="$(echo "${dock2_rank}" | awk '{split($0,b," "); print b[2]}')";
+s2=$((S2));
   
-  cp dock2_ranked_1.pdb nc_ref.pdb;
-  if (( $s1 < $s2 )); then
-    cp dock1_ranked_1.pdb nc_ref.pdb;
-    else
-  fi
+cp dock2_ranked_1.pdb nc_ref.pdb;
+if (( $s1 < $s2 )); then
+  cp dock1_ranked_1.pdb nc_ref.pdb;
+  else
+fi
   
-  adcp -t receptor.trg -s FFEIF -N 400 -n 20000000 -o dock3 -ref nc_ref.pdb -nc 0.8 -c 40 &> dock3.log;
+adcp -t 2xpp.trg -s FFEIF -N 400 -n 20000000 -o dock3 -ref nc_ref.pdb -nc 0.8 -c 40 &> dock3.log;
 ```
 
 *Method explained*
 
-+ The population of initial conformer is set to be all-helical, as specified by the sequence in ALL-CAPS. Three docking calculations were performed in serial, each containing 400 independent GA runs with max. 20,000,000 MC steps per GA run. 
-+ Docking Calculation #1 may use an arbitrarily placed (preferably folded in the desired way, if helical, coil or a specific secondary structure is expected) conformer of the peptide. The default RMSD clustering will be used after completion of all searches. 
-+ Docking Calculation #2 uses the top-ranked conformer from Docking Calculation #2 and the default RMSD clustering. 
-+ Docking Calculation #3 uses the conformer from Docking Calculations #1 and #2 that has the lowest printed affinity. The default contact-based clustering is used, assuming the selected conformer from the previous docking calculations has the native contacts. Outcomes from Docking Calculation #3 will be considered for post-processing and further optimization. 
++ **The population of initial conformer** is set to be all-helical, as specified by the sequence in ALL-CAPS. Three docking calculations were performed in serial, each containing 400 independent GA runs with max. 20,000,000 MC steps per GA run. 
++ **Docking Calculation #1** may use an arbitrarily placed (preferably folded in the desired way, if helical, coil or a specific secondary structure is expected) conformer of the peptide. The default RMSD clustering will be used after completion of all searches. 
++ **Docking Calculation #2** uses the top-ranked conformer from Docking Calculation #2 and the default RMSD clustering. 
++ **Docking Calculation #3** uses the conformer from Docking Calculations #1 and #2 that has the lowest printed affinity. The default contact-based clustering is used, assuming the selected conformer from the previous docking calculations has the native contacts. Outcomes from Docking Calculation #3 will be considered for post-processing and further optimization. 
 
-I perform the docking calculations in three replicates, but with different reference structures for clustering, because I think choice of reference might affect clustering and ranking, and often times there is no prior knowledge what the best conformation (folding) would be like for the sequence to-be-docked, and no reference structure to start with for the native contact analysis. However, if the top-ranked binding modes can be found in three replicates and are ranked invariantly with choice of reference structure, then I would take them as reproducible top-ranked binding modes. 
+I perform the docking calculations *in three replicates*, but with different reference structures for clustering, because I think choice of reference might affect clustering and ranking, and often times there is no prior knowledge what the best conformation (folding) would be like for the sequences of interest (unless the calculation is strictly a re-docking, while this example is not), and no reference structure to start with for the native contact analysis. However, if the top-ranked binding modes can be found in three replicates and are ranked invariantly with choice of reference structure, then I would take them as reproducible top-ranked binding modes. 
 
-Below is the standard outputs I got for the top 10 binding modes from the example docking calculations - 
+Below are the standard outputs I got for the top 10 binding modes from the example docking calculations - 
 
 *dock1.log*
 
