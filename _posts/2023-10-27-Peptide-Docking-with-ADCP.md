@@ -177,7 +177,6 @@ To begin with, we will make a combined structure of the protein-peptide compmlex
 def order_pdb(input_pdb):
     resnum_list = []
     resblock_dict = {}
-    #resname_dict = {}
     with open(input_pdb,"r") as f:
         line = f.readline()
         while line:
@@ -217,12 +216,96 @@ with open("complex_1.pdb","w") as fw:
     fw.write("TER\nEND\n")
 ```
 
-In the above Python codes, the atoms in ADCP output file `dock3_ranked_1.pdb` are re-ordered by residue as required by reduce. Next, we will run reduce on the complex structure `complex_1.pdb` -
-
-```s
-reduce -NOFLIP complex_1.pdb > complex_1H.pdb;
-```
+In the above Python codes, the atoms in ADCP output file `dock3_ranked_1.pdb` are re-ordered by residue as required by reduce. 
 
 ### Protonate the Protein-Peptide Complex
 
+Next, we will run reduce on the complex structure `complex_1.pdb`. We will use `-NOFLIP` option to build hydrogens for HIS sidechain nitrogens -
+
+```s
+reduce -NOFLIP complex_1.pdb > complex_1H.pdb
+```
+
 ### Write the Updated Receptor and Peptide Ligand PDBQT File
+
+Finally, we will split the protonated protein-peptide complex `complex_1H.pdb` into protein and peptide ligand. We will also correct the residue names for HIS residues according to their tautomeric and protonation forms. The following Python code will generate the protein PDB file `complex_1H_rec.pdb` and receptor PDB file `complex_1H_pep.pdb` with corrected residue names - 
+
+```python
+# assigns HIE/HID/HIP in protonated protein or peptide pdb files
+def assign_his(input_pdb_block):
+    resnum_list = []
+    resblock_dict = {}
+    resname_dict = {}
+    for line in input_pdb_block:
+        if line[:6] in ["ATOM  "]:
+            resnum = line[22:26]
+            if resnum not in resnum_list:
+                resnum_list.append(resnum)
+                resblock_dict[resnum] = [line] # residues must have unique residue numbers
+                resname_dict[resnum] = line[17:20] # residue names must present in res_smi
+            else:
+                resblock_dict[resnum].append(line)
+    new_pdb_block = []
+    for resnum in resnum_list:
+        newname = "HID" # assumes HID
+        if resname_dict[resnum] in ["HIS"]:
+            resblock = resblock_dict[resnum]
+            anames = [aline[12:16] for aline in resblock]
+            if " HE2" in anames:
+                if " HD1" not in anames:
+                    newname = "HIE"
+                else:
+                    newname = "HIP"
+            resblock_dict[resnum] = [aline.replace("HIS",newname) for aline in resblock]
+        new_pdb_block += resblock_dict[resnum]
+    return new_pdb_block
+
+## assumes receptor appears before peptide
+## assumes TER presents at the end of receptor
+rec, pep = [[],[]]
+with open("complex_1H.pdb","r") as f:
+    line = f.readline()
+    while line:
+        if line[:6]=="ATOM  ":
+            rec.append(line)
+        else:
+            if line[:3]=="TER":
+                break
+        line = f.readline()
+    while line:
+        if line[:6]=="ATOM  ":
+            pep.append(line)
+        line = f.readline()
+    
+with open("complex_1H_rec.pdb","w") as fw:
+    for line in assign_his(rec):
+        fw.write(line)
+# write pep
+with open("complex_1H_pep.pdb","w") as fw:
+    for line in assign_his(pep):
+        fw.write(line)
+```
+
+Now, we may redo receptor preparation with `prepare_receptor` -
+
+```s
+prepare_receptor -r complex_1H_rec.pdb -o complex_1H_rec.pdbqt
+```
+
+In theory, `mk_prepare_receptor.py` could do the same thing - 
+
+```s
+mk_prepare_receptor.py \
+--pdb complex_1H_rec.pdb -o complex_1H_rec \
+--box_size 30 30 30 --box_center 20.076 10.981 27.791 --skip_gpf
+```
+
+`mk_prepare_receptor.py` does not tolerate missing and/or incomplete capping groups, so it won't work for `complex_1H_rec.pdb`.
+
+The peptide ligand preparation can be done from a PDB file, using [`prepare_peptide_ligand.py])(https://github.com/rwxayheee/prepare_peptide_ligand/blob/main/prepare_peptide_ligand.py) I propose to prepare peptide ligand PDBQT file from a PDB file - 
+
+```python
+from prepare_peptide_ligand import *
+with open("complex_1H_pep.pdbqt","w") as fw:
+    fw.write(mode_to_pdbqt_string("complex_1H_pep.pdb"))
+```
