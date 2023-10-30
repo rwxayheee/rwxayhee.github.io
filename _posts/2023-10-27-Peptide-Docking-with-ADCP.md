@@ -413,9 +413,9 @@ Performing docking (random seed: -1838194651) ...
 
 After running three replicates, I found that Vina's output mode#2 (purple) is similar to ADCP's top-ranked mode (magenta) we have been working on: 
 
-![adcp-vina2-overlay](/assets/img/opt-adcp-vina2-overlay.jpg)
+![adcp-vina2-overlay](/assets/img/adcp-vina2-overlay.jpg)
 
 While Vina's output mode#1 (purple) adopts a very interesting conformation, with three F residues stack on top of each other: 
 
-![adcp-vina1-overlay](/assets/img/opt-adcp-vina-overlay.jpg)
+![adcp-vina-overlay](/assets/img/adcp-vina-overlay.jpg)
 
