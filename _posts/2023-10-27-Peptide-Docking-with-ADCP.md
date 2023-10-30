@@ -34,7 +34,7 @@ To reproduce the presented work, you must have the software dependencies:
 * [Step 3: Local Optimization with Vina](#step-3-local-optimization-with-vina)
   + [Rigid Receptor Local Optimization](#rigid-receptor-local-optimization)
   + [Compare with Docking in Vina](#compare-with-docking-in-vina)
-  + [Flexible Receptor Local Optimization]
+  + [Flexible Receptor Local Optimization](#flexible-receptor-local-optimization)
 
 ## Step 1: Docking Calculation with ADCP
 
@@ -305,7 +305,7 @@ mk_prepare_receptor.py \
 
 `mk_prepare_receptor.py` does not tolerate missing and/or incomplete capping groups, so it won't work for `complex_1H_rec.pdb`.
 
-The peptide ligand preparation can be done from a PDB file, using [`prepare_peptide_ligand.py])(https://github.com/rwxayheee/prepare_peptide_ligand/blob/main/prepare_peptide_ligand.py) I propose to prepare peptide ligand PDBQT file from a PDB file - 
+The peptide ligand preparation can be done from a PDB file, using [prepare_peptide_ligand.py])(https://github.com/rwxayheee/prepare_peptide_ligand/blob/main/prepare_peptide_ligand.py) I propose to prepare peptide ligand PDBQT file from a PDB file - 
 
 ```python
 from prepare_peptide_ligand import *
@@ -418,4 +418,6 @@ After running three replicates, I found that Vina's output mode#2 (purple) is si
 While Vina's output mode#1 (purple) adopts a very interesting conformation, with three F residues stack on top of each other: 
 
 ![adcp-vina-overlay](/assets/img/adcp-vina-overlay.jpg)
+
+### Flexible Receptor Local Optimization
 
