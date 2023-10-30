@@ -341,7 +341,7 @@ print('Score after minimization : ', energy_minimized)
 v.write_pose('mode_1_minimized.pdbqt', overwrite=True)
 ```
 
-*Output*
+*Outputs*
 
 ```s
 Score before minimization:  [-4.133 -9.087  0.     0.     0.    14.634  4.954 14.634]
@@ -358,7 +358,7 @@ Below is an overlay picture of the top-ranked pose, before (cyan) vs. after (mag
 
 It can be seen from the overlay that, the major improvement is the spacing of atoms in peptide residues I and F that were too close in the original ADCP output. 
 
-And an overlay picture of the top-ranked pose (magenta) and the position of sequence `FFEIF` in the crystal structure (cyan): 
+And an overlay picture of the minimized top-ranked pose (magenta) and the position of sequence `FFEIF` in the crystal structure (green): 
 
 ![2xpp-adcp-overlay](/assets/img/2xpp-adcp-overlay.jpg)
 
@@ -382,7 +382,7 @@ v.dock(exhaustiveness=32, n_poses=20)
 v.write_poses('2xpp_ligand_vina_out.pdbqt', n_poses=5, overwrite=True)
 ```
 
-*Output*
+*Outputs*
 
 ```s
 mode |   affinity | dist from best mode
@@ -411,7 +411,7 @@ mode |   affinity | dist from best mode
 Performing docking (random seed: -1838194651) ... 
 ```
 
-After running three replicates, I found that Vina's output mode#2 (purple) is similar to ADCP's top-ranked mode (magenta) we have been working on: 
+From the above docking calculation, I found that Vina's output mode#2 (purple) is similar to ADCP's top-ranked mode (magenta) we have been working on: 
 
 ![adcp-vina2-overlay](/assets/img/adcp-vina2-overlay.jpg)
 
@@ -471,4 +471,48 @@ v.write_poses('2xpp_ligand_vina_flex_out.pdbqt', n_poses=5, overwrite=True)
 ```
 
 *Outputs*
+
+```s
+mode |   affinity | dist from best mode
+     | (kcal/mol) | rmsd l.b.| rmsd u.b.
+-----+------------+----------+----------
+   1        -6.95          0          0
+   2       -6.776      1.798      6.518
+   3       -6.694      1.918       3.56
+   4       -6.653      2.024       6.89
+   5       -6.599      2.286      4.095
+   6       -6.558      1.804      4.914
+   7       -6.485       1.97      5.734
+   8       -6.479      2.073      5.386
+   9       -6.477      1.737      3.347
+  10       -6.449      2.158       4.21
+  11       -6.429      1.692      3.516
+  12       -6.426      1.308      2.006
+  13       -6.403      2.009      4.388
+  14       -6.262      2.244      6.838
+  15       -6.213      2.536      6.052
+  16       -6.205      2.515       6.28
+  17       -6.201      2.068       5.04
+  18       -6.189      1.863      4.501
+  19       -6.125      2.254      3.969
+  20       -6.077      2.129      6.394
+Performing docking (random seed: 196250666) ... 
+```
+
+To summarize, visual comparisons are provided for the following generated structures: 
++ Minimized ADCP top binding mode with rigid receptor (magenta). 
++ Minimized ADCP top binding mode with flexible receptor (yellow).
++ Top binding modes from Vina's docking with flexible receptor (purple). 
+
+Below is an overlay of the ADCP top binding modes that were minimized with rigid receptor (magenta) and flexible receptor (yellow): 
+
+![rigid-vs-flex](/assets/img/rigid-vs-flex.jpg)
+
+Below is an overlay of the minimized ADCP top binding mode with rigid receptor (magenta), and Vina's #2 binding mode with flexible receptor (purple). Although some of the receptor sidechains are positioned differently, the binding modes of the peptide ligand are generally consistent with each other: 
+
+![flex-top-2](/assets/img/flex-top-2.jpg)
+
+Below is an overlay of the minimized ADCP top binding mode with rigid receptor (magenta), and Vina's #1 binding mode with flexible receptor (purple). Both the receptor sidechains and the binding modes of the peptide ligand are substantially different: 
+
+![flex-top-1](/assets/img/flex-top-1.jpg)
 
