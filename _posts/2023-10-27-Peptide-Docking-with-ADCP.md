@@ -32,7 +32,8 @@ To reproduce the presented work, you must have the software dependencies:
   + [Protonate the Protein-Peptide Complex](#protonate-the-protein-peptide-complex)
   + [Write the Updated Receptor and Peptide Ligand PDBQT File](#write-the-updated-receptor-and-peptide-ligand-pdbqt-file)
 * [Step 3: Local Optimization with Vina](#step-3-local-optimization-with-vina)
-  + [Rigid Receptor Local Optimization]
+  + [Rigid Receptor Local Optimization](#rigid-receptor-local-optimization)
+  + [Compare with Docking in Vina](#compare-with-docking-in-vina)
   + [Flexible Receptor Local Optimization]
 
 ## Step 1: Docking Calculation with ADCP
