@@ -11,11 +11,11 @@ image: adcp-our-opt.jpg
 
 This post describes **peptide docking** using [Autodock CrankPep (ADCP)](https://ccsb.scripps.edu/adcp) (Version 1.0 rc1), some **post-processing** including [converting the output structure of the docked peptide into a charged RDKit molecule](https://github.com/rwxayheee/prepare_peptide_ligand), and finally a very primitive **"induced-fit" refinement** using the local optimization function, `optimize`, [from AutoDock Vina's Python bindings](https://autodock-vina.readthedocs.io/en/latest/vina.html#vina.vina.Vina.optimize). The efforts were based on the current major version of ADCP as of Oct 2023 with the intent to **enable post-processing of ADCP outcomes by Vina and RDKit in Python**. 
 
-The provided example is based on an experimental structure of Spt6-Iws1(Spn1) complex from *E. cuniculi* ([PDB ID: 2XPP](https://www.rcsb.org/structure/2xpp)). The crystal structure 2XPP contains two chains: The longer one is Iws1 and will be the receptor in the docking calculation. The shorter one is a truncated form of Spt6. In addition to the mentioned structure, the Spt6-Iws1 complex is also observed in a high-res EM structure of actively working RNA polymerase II elongation complex ([PDB ID: 7XN7](https://www.rcsb.org/structure/7xn7)). The peptide sequence `FFEIF` is part of the IWS1-interacting domain of Spt6 in *E. cuniculi*. Similar sequences present in Spt6 across different species, with a highly conserved F residue that fits the binding site on the Iws1 receptor. The precense of multiple F residues makes the 5-mer sequence from *E. cuniculi* an interesting sequence to explore in peptide docking calculations. 
+The provided example is based on an experimental structure of Spt6-Iws1(Spn1) complex from *E. cuniculi* ([PDB ID: 2XPP](https://www.rcsb.org/structure/2xpp)). The crystal structure 2XPP contains two chains: The longer one is Iws1 and will be the receptor in the docking calculation. The shorter one is a truncated form of Spt6. In addition to the mentioned structure, the Spt6-Iws1 complex is also observed in a high-res EM structure of actively working RNA polymerase II elongation complex ([PDB ID: 7XN7](https://www.rcsb.org/structure/7xn7)). The peptide sequence `FFEIF` is part of the IWS1-interacting domain of Spt6 in *E. cuniculi*. Similar sequences are present in Spt6 across different species, with a highly conserved F residue that fits the binding site on the Iws1 receptor. The presence of multiple F residues makes the 5-mer sequence from *E. cuniculi* an interesting sequence to explore in peptide docking calculations. 
 
 # Overview
 
-This post will walk you through a peptide docking project consisting of (1) docking calculation with ADCP, (2) post-processing with reduce and (3) structure refinement and rescoring with Vina. 
+This post will walk you through a peptide docking project consisting of (1) docking calculation with ADCP, (2) post-processing with reduce, and (3) structure refinement and rescoring with Vina. 
 
 To reproduce the presented work, you must have the software dependencies: 
 + [ADFR Suite](https://ccsb.scripps.edu/adfr/downloads/) (v1.0 rc1, including `ADCP`, `reduce`, `prepare_ligand`, `prepare_receptor`)
@@ -73,7 +73,7 @@ def shell(cmd):
 
 ### Docking Calculations
 
-Running the docking calculations with insufficient scope (number of independnt GA runs, as specified by `-N`) and depth (number of max. MCsteps, as specified by `-n`) will result in less reproducible outcomes. Here is my recipe for the presented system, which I think will produce relatively reproducible results for 5-mer to 7-mer peptides - 
+Running the docking calculations with insufficient scope (number of independent GA runs, as specified by `-N`) and depth (number of max. MC steps, as specified by `-n`) will result in less reproducible outcomes. Here is my recipe for the presented system, which I think will produce relatively reproducible results for 5-mer to 7-mer peptides - 
 
 ```s
 #!/bin/zsh
@@ -170,11 +170,11 @@ From the above outputs, we should see that the top-ranked pose in Docking Calcul
 
 ## Step 2: Post-processing with reduce
 
-In this step, we will work on the top-ranked binding mode obtained from Deocking Calculation #3, which was written to `dock3_ranked_1.pdbqt`. Because ADCP does not make indications on the tautomeric or protonation form of HIS (whether it is HIE/HID or HIP), the evaluation will be made in reduce on the combined structure of protein-peptide complex. The protonated complex will be the inital structure for local optimization in the next step. 
+In this step, we will work on the top-ranked binding mode obtained from Docking Calculation #3, which was written to `dock3_ranked_1.pdbqt`. Because ADCP does not make indications on the tautomeric or protonation form of HIS (whether it is HIE/HID or HIP), the evaluation will be made in reduce on the combined structure of protein-peptide complex. The protonated complex will be the initial structure for local optimization in the next step. 
 
 ### Generate Combined Structure of the Protein-Peptide Complex
 
-To begin with, we will make a combined structure of the protein-peptide compmlex, using the unprotonated protein structure `2xpp_iws1.pdb` and the top-ranked peptide binding mode `dock3_ranked_1.pdb`. This can be done with a molecule editing tool, a text editing tool or by the following Python codes - 
+To begin with, we will make a combined structure of the protein-peptide complex, using the unprotonated protein structure `2xpp_iws1.pdb` and the top-ranked peptide binding mode `dock3_ranked_1.pdb`. This can be done with a molecule editing tool, a text editing tool or by the following Python codes - 
 
 ```python
 def order_pdb(input_pdb):
@@ -305,7 +305,7 @@ mk_prepare_receptor.py \
 
 `mk_prepare_receptor.py` does not tolerate missing and/or incomplete capping groups, so it won't work for `complex_1H_rec.pdb`.
 
-The peptide ligand preparation can be done from a PDB file, using [prepare_peptide_ligand.py](https://github.com/rwxayheee/prepare_peptide_ligand/blob/main/prepare_peptide_ligand.py) I propose to prepare peptide ligand PDBQT file from a PDB file - 
+The peptide ligand preparation can be done from a PDB file, using [prepare_peptide_ligand.py](https://github.com/rwxayheee/prepare_peptide_ligand/blob/main/prepare_peptide_ligand.py) I propose to prepare the peptide ligand PDBQT file from a PDB file - 
 
 ```python
 from prepare_peptide_ligand import *
@@ -415,13 +415,13 @@ From the above docking calculation, I found that Vina's output mode#2 (purple) i
 
 ![adcp-vina2-overlay](/assets/img/adcp-vina2-overlay.jpg)
 
-While Vina's output mode#1 (purple) adopts a very interesting conformation, with three F residues stack on top of each other: 
+While Vina's output mode#1 (purple) adopts a very interesting conformation, with three F residues stacked on top of each other: 
 
 ![adcp-vina-overlay](/assets/img/adcp-vina-overlay.jpg)
 
 ### Flexible Receptor Local Optimization
 
-In final section of this post, we will show a primitive "induced-fit" optimization by performing local optimization with flexible receptor sidechains, using Vina's `optimize` in Python. To begin with, we will run receptor preparation with `mk_prepare_receptor.py` for `complex_1H_rec.pdbqt` and a few selected sidechains based on distances and interactions with the peptide ligand in the binding mode showed in `complex_1H_pep.pdbqt`. 
+In the final section of this post, we will show a primitive "induced-fit" optimization by performing local optimization with flexible receptor sidechains, using Vina's `optimize` in Python. To begin with, we will run receptor preparation with `mk_prepare_receptor.py` for `complex_1H_rec.pdbqt` and a few selected sidechains based on distances and interactions with the peptide ligand in the binding mode showed in `complex_1H_pep.pdbqt`. 
 
 First, for the receptor preparation - 
 
