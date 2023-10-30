@@ -305,7 +305,7 @@ mk_prepare_receptor.py \
 
 `mk_prepare_receptor.py` does not tolerate missing and/or incomplete capping groups, so it won't work for `complex_1H_rec.pdb`.
 
-The peptide ligand preparation can be done from a PDB file, using [prepare_peptide_ligand.py])(https://github.com/rwxayheee/prepare_peptide_ligand/blob/main/prepare_peptide_ligand.py) I propose to prepare peptide ligand PDBQT file from a PDB file - 
+The peptide ligand preparation can be done from a PDB file, using [prepare_peptide_ligand.py](https://github.com/rwxayheee/prepare_peptide_ligand/blob/main/prepare_peptide_ligand.py) I propose to prepare peptide ligand PDBQT file from a PDB file - 
 
 ```python
 from prepare_peptide_ligand import *
@@ -420,4 +420,55 @@ While Vina's output mode#1 (purple) adopts a very interesting conformation, with
 ![adcp-vina-overlay](/assets/img/adcp-vina-overlay.jpg)
 
 ### Flexible Receptor Local Optimization
+
+In final section of this post, we will show a primitive "induced-fit" optimization by performing local optimization with flexible receptor sidechains, using Vina's `optimize` in Python. To begin with, we will run receptor preparation with `mk_prepare_receptor.py` for `complex_1H_rec.pdbqt` and a few selected sidechains based on distances and interactions with the peptide ligand in the binding mode showed in `complex_1H_pep.pdbqt`. 
+
+First, for the receptor preparation - 
+
+```s
+mk_prepare_receptor.py \
+--pdbqt complex_1H_rec.pdbqt -o complex_1H_mk \
+-f A:TYR:164 -f A:LYS:161 -f A:THR:188 \
+-f A:PHE:165 -f A:LEU:154 -f A:VAL:184 \
+-f A:TRP:187 \
+--box_size 30 30 30 --box_center 20.076 10.981 27.791 --skip_gpf
+```
+
+Next, we will perform local optimization in Python - 
+
+```python
+v = Vina(sf_name='vina')
+
+v.set_receptor(rigid_pdbqt_filename='complex_1H_mk_rigid.pdbqt', flex_pdbqt_filename='complex_1H_mk_flex.pdbqt')
+
+v.set_ligand_from_file('complex_1H_pep.pdbqt')
+v.compute_vina_maps(center=[20.076, 10.981, 27.791], box_size=[30, 30, 30])
+
+# Score the current pose
+energy = v.score()
+print('Score before minimization: ', energy)
+
+# Minimized locally the current pose
+energy_minimized = v.optimize()
+print('Score after minimization : ', energy_minimized)
+v.write_pose('mode_1_flex_minimized.pdbqt', overwrite=True)
+```
+
+*Outputs*
+
+```s
+Computing Vina grid ... Score before minimization:  [-4.03  -6.87  -1.391 -7.68  -1.668 14.634  4.829  5.883]
+Score after minimization :  [ -5.766  -7.104  -5.029  -8.532  -1.876  -3.627   6.911 -13.491]
+done.
+Performing local search ... done.
+```
+
+And finally, we can run a docking calculation immediately after the local optimization - 
+
+```python
+v.dock(exhaustiveness=32, n_poses=20)
+v.write_poses('2xpp_ligand_vina_flex_out.pdbqt', n_poses=5, overwrite=True)
+```
+
+*Outputs*
 
