@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Peptide Docking with ADCP, Post-processing, and Induced-fit Optimization with Vina"
+title: "Peptide Docking with ADCPv1.0, Post-processing, and Induced-fit Optimization with Vina"
 author: "rwxayheee"
 categories: journal
 tags: [documentation]
