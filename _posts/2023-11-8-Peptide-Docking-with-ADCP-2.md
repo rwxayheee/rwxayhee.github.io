@@ -11,11 +11,11 @@ image: coming-soon.jpg
 
 This post is based on some basic knowledge and familarity with **peptide docking** using [Autodock CrankPep (ADCP)](https://ccsb.scripps.edu/adcp), as described in the [previous post](https://rwxayheee.github.io/Peptide-Docking-with-ADCP). 
 
-The intent of the post is to introduce to our lab members the new features in ADCP v1.1, including the most useful **OpenMM minimization** and the incorporation of D-amino acids, followed by some additional steps that might benefit our own work such as **parsing and exporting the output to RDKit** for post-processing, and finally **to Amber for the MM/GBSA calculation**. 
+The intent of the post is to introduce to our lab members the new features in ADCP v1.1, including the most useful **OpenMM minimization** and the incorporation of D-amino acids, followed by some additional steps that might benefit our own work such as **parsing and exporting the output to RDKit** for post-processing, and finally **to AMBER for the MM/GBSA calculation**. 
 
 # Overview
 
-This post includes our own examples of docking calculations for standard amino acid (AA) peptides, cyclic peptides and peptides with D-amino acids which have better support in ADCP v1.1. The post-processing in AutoDock Vina, which we used for ADCP v1.0, is compared with the new post-processing protocol in this post using the OpenMM funtionalities that were embedded in ADCP v1.1. Lastly, because the minimization is performed *in vacuo*, we want to recalculate the binding energy and free energy in Amber using an implicit solvation model. 
+This post includes our own examples of docking calculations for [standard amino acid (AA)](https://en.wikipedia.org/wiki/Proteinogenic_amino_acid) peptides, cyclic peptides and peptides with D-amino acids which have better support in ADCP v1.1. The post-processing in AutoDock Vina, which we used for ADCP v1.0, is compared with the new post-processing protocol in this post using the OpenMM funtionalities that were embedded in ADCP v1.1. 
 
 ## Associated Files
 
@@ -31,15 +31,15 @@ peptide-docking/
 
 # Table of Contents
 
-* [Example 1-1: Docking a Standard AA, 5-mer Peptide and Using OpenMM for Minimization](#example-1-1-docking-a-standard-aa-5-mer-peptide-and-using-openmm-for-minimization)
-* [Example 1-2: Exporting Parameters and Coordinates from OpenMM into Amber for MM/GBSA Calculation]
+* [Example 1-1: Basic Docking: Docking a Standard AA, 5-mer Peptide](#example-1-1-docking-a-standard-aa-5-mer-peptide-and-using-openmm-for-minimization)
+* [Example 1-2: Basic Minimization: Using OpenMM for Minimization]
 
-* [Example 2-1: Docking a Standard AA, 5-mer Peptide and Using Vina for Local Optimization]
-* [Example 2-2: Exporting Molecules from RDKit into Amber for MM/GBSA Calculation]
+* [Example 2-1: Interfacing RDKit: Exporting ADCP raw outputs into RDKit Molecules and Using Vina for Local Optimization]
+* [Example 2-2: Interfacing AMBER: Exporting minmized ADCP outputs into AMBER for MM/GBSA Calculation]
 
-* [Example 3: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection](#example-3-docking-a-cyclice-peptide-containing-a-disulfide-bond-and-pose-selection)
+* [Example 3: Advanced Docking: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection](#example-3-docking-a-cyclice-peptide-containing-a-disulfide-bond-and-pose-selection)
 
-* [Example 4: Docking a Peptide Containing D-Amino Acids and Backbone Dihedral Validation](#example-4-docking-a-peptide-containing-d-amino-acids-and-backbone-dihedral-validation)
+* [Example 4: Advanced Docking: Docking a Peptide Containing D-Amino Acids and Backbone Dihedral Validation](#example-4-docking-a-peptide-containing-d-amino-acids-and-backbone-dihedral-validation)
 
 ## Example 1-1: Docking a Standard AA, 5-mer Peptide and Using OpenMM for Minimization
 
