@@ -31,4 +31,32 @@ This post includes our own examples of docking calculations for standard amino a
 
 ## Example 1-1: Docking a Standard AA, 5-mer Peptide and Using OpenMM for Minimization
 
-The preparation steps for the docking calculation can be performed the same way as described in section [Structure and Target Preparation](https://rwxayheee.github.io/Peptide-Docking-with-ADCP#structure-and-target-preparation) in the previous post. 
+The preparation steps for the docking calculation can be performed the same way as described in section [Structure and Target Preparation](https://rwxayheee.github.io/Peptide-Docking-with-ADCP#structure-and-target-preparation) in the previous post. Additionally, because the tautomers of histidine residues (HIE/HID) will be discriminated in ADCP v1.1 (at least in the post-processing step that uses molecular mechanics), the `NOFLIP` or `FLIP` options may be used to protonate the histidine sidechains in the protein receptor and peptide ligands. 
+
+Here beginning from the receptor PDB file, `2xpp_iws1.pdb`, and a peptide PDB file in the aligned position, `2xpp_FFEIF.pdb`, the following commands were used for **docking preparation** - 
+
+```s
+# initialisation of ADCP v1.1
+source ~/.bashrc; # mamba initialize
+micromamba activate adcpsuite # activate micromamba env
+
+# ligand preparation
+reduce 2xpp_FFEIF.pdb > 2xpp_pepH.pdb; # protonate peptide ligand
+prepare_ligand -l 2xpp_pepH.pdb -o 2xpp_pepH.pdbqt # generate peptide ligand PDBQT
+
+# receptor prapration
+reduce -NOFLIP 2xpp_iws1.pdb > 2xpp_recH.pdb; # protonate receptor
+prepare_receptor -r 2xpp_recH.pdb -o 2xpp_recH.pdbqt; # generate receptor PDBQT
+agfr -r 2xpp_recH.pdbqt -l 2xpp_pepH.pdbqt -asv 1.1 -o 2xpp -ng # generate receptor TRG, skip gradient calculation
+```
+
+And the command for **docking calculation** was - 
+
+```s
+adcp -O -T 2xpp.trg -s "FFEIF" -N 400 -n 20000000 -o dock1 -L swiss -w dock1 -ref 2xpp_pepH.pdb -nc 0.8 -c 40 &> dock1.log;
+```
+
+ADCP v1.1 uses slightly different syntax to read TRG file (`-T`) and there are more options (`-L`, `-w`) to support the additional features. In addition, the default clustering method has changed from RMSD to contact-based clustering with a cutoff occupancy of 0.8. A reference structure is optional, but might help to measure the reproducibility or track possible improvements if the docking calculations are run in replicates. 
+
+The above calculation took about 1 hours 40 minutes on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz. 
+
