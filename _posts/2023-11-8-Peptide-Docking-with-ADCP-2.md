@@ -25,9 +25,9 @@ This post includes our own examples of docking calculations for standard amino a
 * [Example 2-1: Docking a Standard AA, 5-mer Peptide and Using Vina for Local Optimization]
 * [Example 2-2: Exporting Molecules from RDKit into Amber for MM/GBSA Calculation]
 
-* [Example 3: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection]
+* [Example 3: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection](#example-3-docking-a-cyclice-peptide-containing-a-disulfide-bond-and-pose-selection)
 
-* [Example 4: Docking a Peptide Containing D-Amino Acids and Backbone Dihedral Validation]
+* [Example 4: Docking a Peptide Containing D-Amino Acids and Backbone Dihedral Validation](#example-4-docking-a-peptide-containing-d-amino-acids-and-backbone-dihedral-validation)
 
 ## Example 1-1: Docking a Standard AA, 5-mer Peptide and Using OpenMM for Minimization
 
@@ -60,3 +60,15 @@ ADCP v1.1 uses slightly different syntax to read TRG file (`-T`) and there are m
 
 The above calculation took about 1 hours 40 minutes on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz. 
 
+## Example 3: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection
+
+
+```s
+adcp -O -T 2xpp.trg -s "FCEIFC" -cys -N 400 -n 20000000 -o dock1 -L swiss -w dock1 -nc 0.8 -c 40 &> dock1.log;
+```
+
+## Example 4: Docking a Peptide Containing D-Amino Acids and Backbone Dihedral Validation
+
+```s
+adcp -O -T 2xpp.trg -s "&FFEIF" -N 400 -n 20000000 -o dock1 -L swiss -w dock1 -nc 0.8 -c 40 &> dock1.log;
+```
