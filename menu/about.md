@@ -11,3 +11,9 @@ The **associated files** are placed under the `files` directory of this project.
 <a href="{{ site.url }}/files/peptide-docking.zip" download>peptide-docking.zip</a>
 
 Contains input PDB files, `2xpp_iws1.pdb` and `2xpp_FFEIF.pdb`, for the peptide docking examples. 
+
+```
+peptide-docking/
+├── 2xpp_FFEIF.pdb
+└── 2xpp_iws1.pdb
+```

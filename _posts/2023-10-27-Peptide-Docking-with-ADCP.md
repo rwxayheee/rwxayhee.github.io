@@ -22,6 +22,18 @@ To reproduce the presented work, you must have the software dependencies:
 + [Meeko](https://github.com/forlilab/Meeko) (Python Bindings, v0.5)
 + [AutoDock Vina](https://github.com/ccsb-scripps/AutoDock-Vina) (Python Bindings, v1.2.5) 
 
+## Associated Files
+
+<a href="{{ site.url }}/files/peptide-docking.zip" download>peptide-docking.zip</a>
+
+Contains input PDB files, `2xpp_iws1.pdb` and `2xpp_FFEIF.pdb`, for the peptide docking examples. 
+
+```
+peptide-docking/
+├── 2xpp_FFEIF.pdb
+└── 2xpp_iws1.pdb
+```
+
 # Table of Contents
 
 * [Step 1: Docking Calculation with ADCP](#step-1-docking-calculation-with-adcp)
