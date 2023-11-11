@@ -48,7 +48,7 @@ Following the steps in the [ADCP documentation](https://ccsb.scripps.edu/adcp/tu
 reduce 2xpp_iws1.pdb > 2xpp_recH.pdb;
 ```
 
-It should be noted that reduce will not protonate any of the imidazole nitrogens on HIS sidechains, unless with option `-NOFLILP` (or `-HIS` or `-BUILD`). 
+It should be noted that reduce will not protonate any of the imidazole nitrogens on HIS sidechains, unless with option `-NOFLIP` (or `-HIS` or `-BUILD`). 
 
 ```s
 reduce 2xpp_FFEIF.pdb > 2xpp_pepH.pdb;
