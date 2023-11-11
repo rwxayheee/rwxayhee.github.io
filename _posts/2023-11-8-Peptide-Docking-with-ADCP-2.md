@@ -23,6 +23,12 @@ This post includes our own examples of docking calculations for standard amino a
 
 Contains input PDB files, `2xpp_iws1.pdb` and `2xpp_FFEIF.pdb`, for the peptide docking examples. 
 
+```
+peptide-docking/
+├── 2xpp_FFEIF.pdb
+└── 2xpp_iws1.pdb
+```
+
 # Table of Contents
 
 * [Example 1-1: Docking a Standard AA, 5-mer Peptide and Using OpenMM for Minimization](#example-1-1-docking-a-standard-aa-5-mer-peptide-and-using-openmm-for-minimization)
@@ -41,7 +47,7 @@ The preparation steps for the docking calculation can be performed the same way 
 
 Here beginning from the receptor PDB file, `2xpp_iws1.pdb`, and a peptide PDB file in the aligned position, `2xpp_FFEIF.pdb`, the following commands were used for **docking preparation** - 
 
-```s
+```shell
 # initialisation of ADCP v1.1
 source ~/.bashrc; # mamba initialize
 micromamba activate adcpsuite # activate micromamba env
@@ -58,23 +64,22 @@ agfr -r 2xpp_recH.pdbqt -l 2xpp_pepH.pdbqt -asv 1.1 -o 2xpp -ng # generate recep
 
 And the command for **docking calculation** was - 
 
-```s
+```shell
 adcp -O -T 2xpp.trg -s "FFEIF" -N 400 -n 20000000 -o dock1 -L swiss -w dock1 -ref 2xpp_pepH.pdb -nc 0.8 -c 40 &> dock1.log;
 ```
 
-ADCP v1.1 uses slightly different syntax to read TRG file (`-T`) and there are more options (`-L`, `-w`) to support the additional features. In addition, the default clustering method has changed from RMSD to contact-based clustering with a cutoff occupancy of 0.8. A reference structure is optional, but might help to measure the reproducibility or track possible improvements if the docking calculations are run in replicates. 
+ADCP v1.1 uses slightly different syntax to read TRG file (`-T`) and there are more options (`-L`, `-w`) to support the additional features. In addition, *the default clustering method has changed from RMSD to contact-based clustering* with a cutoff occupancy of 0.8. A reference structure is optional, but might help to measure the reproducibility or track possible improvements if the docking calculations are run in replicates. 
 
 The above calculation took about 1 hours 40 minutes on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz. 
 
 ## Example 3: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection
 
-
-```s
+```shell
 adcp -O -T 2xpp.trg -s "FCEIFC" -cys -N 400 -n 20000000 -o dock1 -L swiss -w dock1 -nc 0.8 -c 40 &> dock1.log;
 ```
 
 ## Example 4: Docking a Peptide Containing D-Amino Acids and Backbone Dihedral Validation
 
-```s
+```shell
 adcp -O -T 2xpp.trg -s "&FFEIF" -N 400 -n 20000000 -o dock1 -L swiss -w dock1 -nc 0.8 -c 40 &> dock1.log;
 ```
