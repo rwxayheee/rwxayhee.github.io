@@ -32,10 +32,12 @@ peptide-docking/
 # Table of Contents
 
 * [Example 1-1 Basic Docking: Docking a Standard AA, 5-mer Peptide in ADCP v1.1](#example-1-1-basic-docking-docking-a-standard-aa-5-mer-peptide-in-adcp-v11)
- + [Docking Preparation](#docking-preparation)
- + [Docking Calculation](#docking-calculation)
+  + [Docking Preparation](#docking-preparation)
+  + [Docking Calculation](#docking-calculation)
 * [Example 1-2 Basic Minimization: Using OpenMM for a Two-step Minimization](#example-1-2-basic-minimization-using-openmm-for-a-two-step-minimization)
- + [Gas Phase Minimization](#gas-phase-minimization)
+  + [Gas Phase Minimization](#gas-phase-minimization)
+  + [Minimization Preparation](#minimization-preparation)
+  + [Minimization with Implicit Solvent](#minimization-with-implicit-solvent)
 
 * [Example 2-1 Interfacing RDKit: Exporting ADCP raw outputs into RDKit Molecules and Using Vina for Local Optimization]
 * [Example 2-2 Interfacing AMBER: Exporting minmized ADCP outputs into AMBER for MM/GBSA Calculation]
@@ -98,7 +100,7 @@ adcp -k -T 2xpp.trg -s "FFEIF" -pdmin -o dock1 -L swiss -w dock1 -nmin 100 -nitr
 
 I let the number of iterations to be 100, as I believe it can yield a reasonable geometry and relatively stable `E_peptide` without changing the docking pose too much. See below for *energy outputs* I collected with `-nitr` ranging from 5 to 1000: 
 
-| nitir | E_Complex | E_Receptor | E_Peptide | dE_Interaction | dE_Complex-Receptor |
+| nitr | E_Complex | E_Receptor | E_Peptide | dE_Interaction | dE_Complex-Receptor |
 | --- | --- | --- | --- | --- | --- |
 | 5 (Default) | 1038.39 | 676.60 | 562.69 | -200.89 | 361.79 |
 | 10 | -1200.51 | -1317.06 | 305.66 | -189.10 | 116.56 |
@@ -108,17 +110,17 @@ I let the number of iterations to be 100, as I believe it can yield a reasonable
 | 500 | -2846.32 | -2569.50 | 79.23 | -356.05 | -276.82 |
 | 1000 | -2865.19 | -2581.05 | 42.53 | -326.66 | -284.14 |
 
-See below for an overlay of minimized structures with `-nitir` equals 5 (green), 25 (magenta), and 100 (yellow): 
+See below for an overlay of minimized structures with `-nitr` equals 5 (green), 25 (magenta), and 100 (yellow): 
 
 ![omm-minimize-1](/assets/img/omm-minimize-1.jpg)
 
-When `-nitir` equals 5 (green) or 25 (magenta), the benzene ring of F residue at the N terminal is visibly distorted. This can also be inferred from the high `E_Peptide` values. 
+When `-nitr` equals 5 (green) or 25 (magenta), the benzene ring of F residue at the N terminal is visibly distorted. This can also be inferred from the high `E_Peptide` values. 
 
-See below for an overlay of minimized structures with `-nitir` equals 100 (yellow), 500 (orange), and 1000 (blue): 
+See below for an overlay of minimized structures with `-nitr` equals 100 (yellow), 500 (orange), and 1000 (blue): 
 
 ![omm-minimize-2](/assets/img/omm-minimize-2.jpg)
 
-When `-nitir` equals 500 (orange) or 1000 (blue), the conformation and position of the peptide could change. Although `E_Complex` could be minimized even more, the minimization and the energies were computed in *vacuo*, so somewhere between 100 and 500 we should consider **switching the environment to solvent**. 
+When `-nitr` equals 500 (orange) or 1000 (blue), the conformation and position of the peptide could change. Although `E_Complex` could be minimized even more, the minimization and the energies were computed in *vacuo*, so somewhere between 100 and 500 we should consider **switching the environment to solvent**. 
 
 However, it should be noted that **not all poses can be properly minimized within 100 steps**. For example, the following linking-ring docked pose (light green), which cannot be minimized without substantial conformation change after 5000 steps (dark green): 
 
@@ -227,7 +229,9 @@ While `dock1_out.pdb` contains the coordinates from the previous minimization an
 
 ### Minimization with Implicit Solvent
 
-
+```shell
+adcp -k -T 2xpp.trg -s "FFEIF" -pdmin -o dock1 -L swiss -w dock1 -nmin 1 -nitr 10 -env implicit &> min2.log;
+```
 
 ## Example 3 Advanced Docking: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection
 
