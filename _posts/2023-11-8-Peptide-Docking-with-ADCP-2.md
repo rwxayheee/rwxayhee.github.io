@@ -32,7 +32,10 @@ peptide-docking/
 # Table of Contents
 
 * [Example 1-1 Basic Docking: Docking a Standard AA, 5-mer Peptide in ADCP v1.1](#example-1-1-basic-docking-docking-a-standard-aa-5-mer-peptide-in-adcp-v11)
+ + [Docking Preparation](#docking-preparation)
+ + [Docking Calculation](#docking-calculation)
 * [Example 1-2 Basic Minimization: Using OpenMM for a Two-step Minimization](#example-1-2-basic-minimization-using-openmm-for-a-two-step-minimization)
+ + [Gas Phase Minimization](#gas-phase-minimization)
 
 * [Example 2-1 Interfacing RDKit: Exporting ADCP raw outputs into RDKit Molecules and Using Vina for Local Optimization]
 * [Example 2-2 Interfacing AMBER: Exporting minmized ADCP outputs into AMBER for MM/GBSA Calculation]
@@ -43,6 +46,7 @@ peptide-docking/
 
 ## Example 1-1 Basic Docking: Docking a Standard AA, 5-mer Peptide in ADCP v1.1
 
+### Docking Preparation
 The preparation steps for the docking calculation can be performed the same way as described in section [Structure and Target Preparation](https://rwxayheee.github.io/Peptide-Docking-with-ADCP#structure-and-target-preparation) in the previous post. Additionally, because the tautomers of histidine residues (HIE/HID) will be discriminated in ADCP v1.1 (at least in the post-processing step that uses molecular mechanics), the `NOFLIP` or `FLIP` options may be used to protonate the histidine sidechains in the protein receptor and peptide ligands. 
 
 Here beginning from the receptor PDB file, `2xpp_iws1.pdb`, and a peptide PDB file in the aligned position, `2xpp_FFEIF.pdb`, the following commands were used for **docking preparation** - 
@@ -62,6 +66,8 @@ prepare_receptor -r 2xpp_recH.pdb -o 2xpp_recH.pdbqt; # generate receptor PDBQT
 agfr -r 2xpp_recH.pdbqt -l 2xpp_pepH.pdbqt -asv 1.1 -o 2xpp -ng # generate receptor TRG, skip gradient calculation
 ```
 
+### Docking Calculation
+
 And the command for **docking calculation** was - 
 
 ```shell
@@ -73,6 +79,8 @@ ADCP v1.1 uses slightly different syntax to read TRG file (`-T`) and there are m
 The above calculation (-N 400 -n 20000000) could take around **1 hours 40 minutes to 2 hours on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz**. 
 
 ## Example 1-2 Basic Minimization: Using OpenMM for a Two-step Minimization
+
+### Gas Phase Minimization
 
 A completed docking calculation will generate a folder named `dock1` (as specified by the `-o` option in the docking calculation), containing the docking output PDB and DLG files: 
 
@@ -108,27 +116,118 @@ When `-nitir` equals 5 (green) or 25 (magenta), the benzene ring of F residue at
 
 See below for an overlay of minimized structures with `-nitir` equals 100 (yellow), 500 (orange), and 1000 (blue): 
 
-![omm-minimize-2](/assets/img/omm-minimize-1.jpg)
+![omm-minimize-2](/assets/img/omm-minimize-2.jpg)
 
 When `-nitir` equals 500 (orange) or 1000 (blue), the conformation and position of the peptide could change. Although `E_Complex` could be minimized even more, the minimization and the energies were computed in *vacuo*, so somewhere between 100 and 500 we should consider **switching the environment to solvent**. 
 
-However it should be noted that **not all poses can be properly minimized within 100 steps**. For example, the following linking-ring docked pose (light green), which cannot be minimized without substantial conformation change after 5000 steps (dark green): 
+However, it should be noted that **not all poses can be properly minimized within 100 steps**. For example, the following linking-ring docked pose (light green), which cannot be minimized without substantial conformation change after 5000 steps (dark green): 
 
 ![omm-linking-benzene](/assets/img/omm-linking-benzene.jpg)
 
 The above minimization calculation (-nmin 100 -nitr 100) will take about 1 hour on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GH. The completed minimization calculation will generate `dock1_omm_rescored_out.pdb` under the work folder `dock1`. With the `-k` option, subfolder `dock1_omm_amber_parm` will be kept under `dock1`. 
 
-To start another minimization, I will do the following two things: 
+### Minimization Preparation
 
-(1) Write minimized peptide coordinates and docking info into a new file to replace `dock1_out.pdb` in the next minimization
+To start another minimization, I will do the following 3 things: 
 
-(2) Rename `dock1_omm_amber_parm`, `dock1_omm_rescored_out.pdb` and `dock1_out.pdb` under `dock1`
+(1) **Relocate output files** under `dock1` to `dock1_min1`
 
 ```shell
-mv dock1/dock1_omm_amber_parm dock1/dock1_omm_amber_parm_1;
-mv dock1/dock1_omm_rescored_out.pdb dock1/dock1_omm_rescored_out_1.pdb;
-mv dock1/dock1_out.pdb dock1/dock1_out_0.pdb;
+cp -r dock1 dock1_min1
 ```
+
+(2) **Write a new PDB file** of the minimized peptide coordinates and docking info to replace `dock1_out.pdb` in the next minimization
+
+```python
+# 1. Read Docking Poses
+dock_dict = {}
+
+with open('dock1/dock1_out.pdb','r') as f:
+    line = f.readline()
+    
+    while line:
+        header = line[:6]
+        if header=='MODEL ':
+            modnum = line.split()[-1]
+            dock_dict[modnum] = []
+        else:
+            if header not in ['ATOM  ','ENDMDL']:
+                dock_dict[modnum].append(line)
+                
+        line = f.readline()
+
+# 2. Read Minimized Poses
+omm_dict = {}
+is_pep = False
+
+with open('dock1/dock1_omm_rescored_out.pdb','r') as f:
+    line = f.readline()
+    
+    while line:
+        header = line[:6]
+        if header=='MODEL ':
+            is_pep = False
+            modnum = line.split()[-1]
+            omm_dict[modnum] = []
+        if header=='TER   ':
+            is_pep = True
+        if header=='ATOM  ' and is_pep:
+            omm_dict[modnum].append(line)
+            # for each model
+            # record all ATOM lines appear after TER
+        
+        line = f.readline()
+
+# 3. Read Rank Mapping
+rank_list = []
+rank_dict = {}
+
+with open('min1.log','r') as f:
+    line = f.readline()
+    
+    while line:
+        if line[:12]=='OMM Ranking:':
+            rank_list.append(line)
+            
+        line = f.readline()
+
+for rank in rank_list[6:-1]:
+    rank_dict[rank.split()[3]] = rank.split()[4]
+    # mapping OMM Rank (key) with ADCP Rank (value)
+
+# 4. Write New PDB
+
+with open('dock1/dock1_min.pdb','w') as fw:
+    for mode in omm_dict.keys():
+        fw.write('MODEL '+mode+'\n')
+        for line in dock_dict[rank_dict[mode]]:
+            fw.write(line)
+        for line in omm_dict[mode]:
+            fw.write(line)
+        fw.write('ENDMDL\n')
+
+```
+
+(3) **Clean Up work folder** `dock1`
+
+```shell
+rm -r dock1/dock1_omm*;
+mv dock1/dock1_min.pdb dock1/dock1_out.pdb;
+```
+
+Now the work forder `dock1` contains only: 
+
+```shell
+dock1
+├── dock1_out.pdb
+└── dock1_summary.dlg
+```
+
+While `dock1_out.pdb` contains the coordinates from the previous minimization and information from the docking calculation. 
+
+### Minimization with Implicit Solvent
+
+
 
 ## Example 3 Advanced Docking: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection
 
