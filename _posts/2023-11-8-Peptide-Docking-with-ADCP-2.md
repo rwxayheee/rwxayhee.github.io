@@ -4,7 +4,7 @@ title: "Peptide Docking and OpenMM Minimization with ADCPv1.1, Interfacing RDKit
 author: "rwxayheee"
 categories: journal
 tags: [documentation]
-image: <iframe src="https://assets.pinterest.com/ext/embed.html?id=361976888776229710" height="450" width="236" frameborder="0" scrolling="no" ></iframe>
+image: Vernons-Linking-Rings.jpg
 ---
 
 # Intro
@@ -70,7 +70,7 @@ adcp -O -T 2xpp.trg -s "FFEIF" -N 400 -n 20000000 -o dock1 -L swiss -w dock1 -re
 
 ADCP v1.1 uses slightly different syntax to read TRG file (`-T`) and there are more options (`-L`, `-w`) to support the additional features. In addition, *the default clustering method has changed from RMSD to contact-based clustering* with a cutoff occupancy of 0.8. A reference structure is optional, but might help to measure the reproducibility or track possible improvements if the docking calculations are run in replicates. 
 
-The above calculation could take around **1 hours 40 minutes to 2 hours on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz**. 
+The above calculation (-N 400 -n 20000000) could take around **1 hours 40 minutes to 2 hours on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz**. 
 
 ## Example 1-2 Basic Minimization: Using OpenMM for a Two-step Minimization
 
@@ -100,21 +100,23 @@ I let the number of iterations to be 100, as I believe it can yield a reasonable
 | 500 | -2846.32 | -2569.50 | 79.23 | -356.05 | -276.82 |
 | 1000 | -2865.19 | -2581.05 | 42.53 | -326.66 | -284.14 |
 
-See below for an overlay of minimized structures with `-ntir` equals 5 (green), 25 (magenta), and 100 (yellow): 
+See below for an overlay of minimized structures with `-nitir` equals 5 (green), 25 (magenta), and 100 (yellow): 
 
 ![omm-minimize-1](/assets/img/omm-minimize-1.jpg)
 
-When `-ntir` equals 5 (green) or 25 (magenta), the benzene ring of F residue at the N terminal is visibly distorted. This can also be inferred from the high `E_Peptide` values. 
+When `-nitir` equals 5 (green) or 25 (magenta), the benzene ring of F residue at the N terminal is visibly distorted. This can also be inferred from the high `E_Peptide` values. 
 
-See below for an overlay of minimized structures with `-ntir` equals 100 (yellow), 500 (orange), and 1000 (blue): 
+See below for an overlay of minimized structures with `-nitir` equals 100 (yellow), 500 (orange), and 1000 (blue): 
 
 ![omm-minimize-2](/assets/img/omm-minimize-1.jpg)
 
-When `-ntir` equals 500 (orange) or 1000 (blue), the conformation and position of the peptide could change. Although `E_Complex` could be minimized even more, the minimization and the energies were computed in *vacuo*, so somewhere between 100 and 500 we should consider **switching the environment to solvent**. 
+When `-nitir` equals 500 (orange) or 1000 (blue), the conformation and position of the peptide could change. Although `E_Complex` could be minimized even more, the minimization and the energies were computed in *vacuo*, so somewhere between 100 and 500 we should consider **switching the environment to solvent**. 
 
-However it should be noted that not all structures can be properly minimized within 100 steps. See below for a linking-ring structure
+However it should be noted that **not all poses can be properly minimized within 100 steps**. For example, the following linking-ring docked pose (light green), which cannot be minimized without substantial conformation change after 5000 steps (dark green): 
 
-The above minimization calculation will take about 1 hour on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GH. The completed minimization calculation will generate `dock1_omm_rescored_out.pdb` under the work folder `dock1`. With the `-k` option, subfolder `dock1_omm_amber_parm` will be kept under `dock1`. 
+![omm-linking-benzene](/assets/img/omm-linking-benzene.jpg)
+
+The above minimization calculation (-nmin 100 -nitr 100) will take about 1 hour on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GH. The completed minimization calculation will generate `dock1_omm_rescored_out.pdb` under the work folder `dock1`. With the `-k` option, subfolder `dock1_omm_amber_parm` will be kept under `dock1`. 
 
 To start another minimization, I will do the following two things: 
 
@@ -127,7 +129,6 @@ mv dock1/dock1_omm_amber_parm dock1/dock1_omm_amber_parm_1;
 mv dock1/dock1_omm_rescored_out.pdb dock1/dock1_omm_rescored_out_1.pdb;
 mv dock1/dock1_out.pdb dock1/dock1_out_0.pdb;
 ```
-
 
 ## Example 3 Advanced Docking: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection
 
