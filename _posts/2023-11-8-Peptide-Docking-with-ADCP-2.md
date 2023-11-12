@@ -146,7 +146,7 @@ cp -r dock1 dock1_min1
 # 1. Read Docking Poses
 dock_dict = {}
 
-with open('dock1/dock1_out.pdb','r') as f:
+with open('dock1_min1/dock1_out.pdb','r') as f:
     line = f.readline()
     
     while line:
@@ -164,7 +164,7 @@ with open('dock1/dock1_out.pdb','r') as f:
 omm_dict = {}
 is_pep = False
 
-with open('dock1/dock1_omm_rescored_out.pdb','r') as f:
+with open('dock1_min1/dock1_omm_rescored_out.pdb','r') as f:
     line = f.readline()
     
     while line:
@@ -196,17 +196,17 @@ with open('min1.log','r') as f:
         line = f.readline()
 
 for rank in rank_list[6:-1]:
-    rank_dict[rank.split()[3]] = rank.split()[4]
-    # mapping OMM Rank (key) with ADCP Rank (value)
+    rank_dict[rank.split()[4]] = rank.split()[3]
+    # mapping ADCP Rank (key) with OMM Rank (value)
 
 # 4. Write New PDB
 
 with open('dock1/dock1_min.pdb','w') as fw:
-    for mode in omm_dict.keys():
+    for mode in dock_dict.keys():
         fw.write('MODEL '+mode+'\n')
-        for line in dock_dict[rank_dict[mode]]:
+        for line in dock_dict[mode]:
             fw.write(line)
-        for line in omm_dict[mode]:
+        for line in omm_dict[rank_dict[mode]]:
             fw.write(line)
         fw.write('ENDMDL\n')
 
