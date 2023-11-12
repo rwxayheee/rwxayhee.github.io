@@ -98,7 +98,7 @@ For the reported 100 poses (default if not changed by the `-m` option in the doc
 adcp -k -T 2xpp.trg -s "FFEIF" -pdmin -o dock1 -L swiss -w dock1 -nmin 100 -nitr 100 -env vacuum &> min1.log;
 ```
 
-I let the number of iterations to be 100, as I believe it can yield a reasonable geometry and relatively stable `E_peptide` without changing the docking pose too much. See below for *energy outputs* I collected with `-nitr` ranging from 5 to 1000: 
+I set the number of iterations to be 100, as I believe it can yield a reasonable geometry and relatively stable `E_peptide` without changing the docking pose too much. See below for the energy outputs I collected with `-nitr` ranging from 5 to 1000: 
 
 | nitr | E_Complex | E_Receptor | E_Peptide | dE_Interaction | dE_Complex-Receptor |
 | --- | --- | --- | --- | --- | --- |
@@ -126,7 +126,9 @@ However, it should be noted that **not all poses can be properly minimized withi
 
 ![omm-linking-benzene](/assets/img/omm-linking-benzene.jpg)
 
-The above minimization calculation (-nmin 100 -nitr 100) will take about 1 hour on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GH. The completed minimization calculation will generate `dock1_omm_rescored_out.pdb` under the work folder `dock1`. With the `-k` option, subfolder `dock1_omm_amber_parm` will be kept under `dock1`. 
+In the 100 processed modes, that seemed to be the only problematic structure that remained unphysical after the 100-step minimization in vacuo. 
+
+The above minimization calculation (-nmin 100 -nitr 100) will take **about 1 hour** on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GH. The completed minimization calculation will generate `dock1_omm_rescored_out.pdb` under the work folder `dock1`. With the `-k` option, subfolder `dock1_omm_amber_parm` will be kept under `dock1`. 
 
 ### Minimization Preparation
 
@@ -229,9 +231,26 @@ While `dock1_out.pdb` contains the coordinates from the previous minimization an
 
 ### Minimization with Implicit Solvent
 
+The command I used to perform the **2nd minimization with implicit solvent** is - 
+
 ```shell
-adcp -k -T 2xpp.trg -s "FFEIF" -pdmin -o dock1 -L swiss -w dock1 -nmin 1 -nitr 10 -env implicit &> min2.log;
+adcp -k -T 2xpp.trg -s "FFEIF" -pdmin -o dock1 -L swiss -w dock1 -nmin 100 -nitr 1000 -env implicit &> min2.log;
 ```
+
+In which I set `-nitr` to be 1000. See below for the energy outputs I collected with `-nitr` ranging from 5 to 5000: 
+
+| nitr | E_Complex | E_Receptor | E_Peptide | dE_Interaction | dE_Complex-Receptor |
+| --- | --- | --- | --- | --- | --- |
+| 5 (Default) | -3084.70 | -2994.62 | -96.17 | 6.09 | -90.08 |
+| 50 | -4771.29 | -4570.70 | -182.15 | -18.44 | -200.59 |
+| 100 | -4844.07 | -4631.38 | -187.98 | -24.71 | -212.69 |
+| 200 | -4872.04 | -4651.11 | -189.32 | -31.60 | -220.93 |
+| 500 | -4895.56 | -4668.38 | -193.22 | -33.96 | -227.18 |
+| 1000 | -4900.30 | -4673.12 | -193.34 | -33.84 | -227.18 |
+| 2000 | -4896.49 | -4669.85 | -193.37 | -33.27 | -226.64 |
+| 5000 | -4883.27 | -4657.35 | -191.20 | -34.72 | -225.92 |
+
+You will see that the energies, most importantly `dE_Interaction`, became generally invariant after `-nitr` reached 1000. But again we should keep in mind that the required number of minimization steps always depends on how good the initial structure is...  
 
 ## Example 3 Advanced Docking: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection
 
