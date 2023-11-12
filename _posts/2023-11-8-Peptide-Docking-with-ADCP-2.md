@@ -4,7 +4,7 @@ title: "Peptide Docking and OpenMM Minimization with ADCPv1.1, Interfacing RDKit
 author: "rwxayheee"
 categories: journal
 tags: [documentation]
-image: coming-soon.jpg
+image: <iframe src="https://assets.pinterest.com/ext/embed.html?id=361976888776229710" height="450" width="236" frameborder="0" scrolling="no" ></iframe>
 ---
 
 # Intro
@@ -70,7 +70,7 @@ adcp -O -T 2xpp.trg -s "FFEIF" -N 400 -n 20000000 -o dock1 -L swiss -w dock1 -re
 
 ADCP v1.1 uses slightly different syntax to read TRG file (`-T`) and there are more options (`-L`, `-w`) to support the additional features. In addition, *the default clustering method has changed from RMSD to contact-based clustering* with a cutoff occupancy of 0.8. A reference structure is optional, but might help to measure the reproducibility or track possible improvements if the docking calculations are run in replicates. 
 
-The above calculation could take around 1 hours 40 minutes to 2 hours on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz. 
+The above calculation could take around **1 hours 40 minutes to 2 hours on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz**. 
 
 ## Example 1-2 Basic Minimization: Using OpenMM for a Two-step Minimization
 
@@ -82,47 +82,52 @@ dock1
 └── dock1_summary.dlg
 ```
 
-For the reported 100 poses (default if not changed by the `-m` option in the docking calculation), we will first perform a gas phase minimization to eliminate the bad contacts in the complex and reduce the strain energies within the peptide ligand - 
+For the reported 100 poses (default if not changed by the `-m` option in the docking calculation), we will first perform a **gas phase minimization** to eliminate the bad contacts in the complex and reduce the strain energies within the peptide ligand - 
 
 ```shell
 adcp -k -T 2xpp.trg -s "FFEIF" -pdmin -o dock1 -L swiss -w dock1 -nmin 100 -nitr 100 -env vacuum &> min1.log;
 ```
 
-I let the number of iterations to be 100, as I believe it can yield a reasonable geometry, relatively stable `E_peptide` without changing the docking pose too much. See below for outputs I collected with `-nitr` ranging from 5 to 1000: 
+I let the number of iterations to be 100, as I believe it can yield a reasonable geometry and relatively stable `E_peptide` without changing the docking pose too much. See below for *energy outputs* I collected with `-nitr` ranging from 5 to 1000: 
 
 | nitir | E_Complex | E_Receptor | E_Peptide | dE_Interaction | dE_Complex-Receptor |
 | --- | --- | --- | --- | --- | --- |
 | 5 (Default) | 1038.39 | 676.60 | 562.69 | -200.89 | 361.79 |
 | 10 | -1200.51 | -1317.06 | 305.66 | -189.10 | 116.56 |
 | 25 | -2362.51 | -2218.40 | 103.79 | -247.91 | -144.11 |
+| 50 | -2606.76 | -2429.05 | 87.96 | -265.68 | -177.71 |
+| 100 | -2755.49 | -2552.56 | 82.50 | -285.43 | -202.93 |
+| 500 | -2846.32 | -2569.50 | 79.23 | -356.05 | -276.82 |
+| 1000 | -2865.19 | -2581.05 | 42.53 | -326.66 | -284.14 |
 
-nitr = 5 (default)
-OMM Energy: E_Complex =   1038.39; E_Receptor =    676.60; E_Peptide  =    562.69
-OMM Energy: dE_Interaction =   -200.89; dE_Complex-Receptor =    361.79
+See below for an overlay of minimized structures with `-ntir` equals 5 (green), 25 (magenta), and 100 (yellow): 
 
-nitir = 10
-OMM Energy: E_Complex =  -1200.51; E_Receptor =  -1317.06; E_Peptide  =    305.66
-OMM Energy: dE_Interaction =   -189.10; dE_Complex-Receptor =    116.56
+![omm-minimize-1](/assets/img/omm-minimize-1.jpg)
 
-nitir = 25
-OMM Energy: E_Complex =  -2362.51; E_Receptor =  -2218.40; E_Peptide  =    103.79
-OMM Energy: dE_Interaction =   -247.91; dE_Complex-Receptor =   -144.11
+When `-ntir` equals 5 (green) or 25 (magenta), the benzene ring of F residue at the N terminal is visibly distorted. This can also be inferred from the high `E_Peptide` values. 
 
-nitr = 50
-OMM Energy: E_Complex =  -2606.76; E_Receptor =  -2429.05; E_Peptide  =     87.96
-OMM Energy: dE_Interaction =   -265.68; dE_Complex-Receptor =   -177.71
+See below for an overlay of minimized structures with `-ntir` equals 100 (yellow), 500 (orange), and 1000 (blue): 
 
-nitir = 100
-OMM Energy: E_Complex =  -2755.49; E_Receptor =  -2552.56; E_Peptide  =     82.50
-OMM Energy: dE_Interaction =   -285.43; dE_Complex-Receptor =   -202.93
+![omm-minimize-2](/assets/img/omm-minimize-1.jpg)
 
-nitir = 500
-OMM Energy: E_Complex =  -2846.32; E_Receptor =  -2569.50; E_Peptide  =     79.23
-OMM Energy: dE_Interaction =   -356.05; dE_Complex-Receptor =   -276.82
+When `-ntir` equals 500 (orange) or 1000 (blue), the conformation and position of the peptide could change. Although `E_Complex` could be minimized even more, the minimization and the energies were computed in *vacuo*, so somewhere between 100 and 500 we should consider **switching the environment to solvent**. 
 
-nitir = 1000
-OMM Energy: E_Complex =  -2865.19; E_Receptor =  -2581.05; E_Peptide  =     42.53
-OMM Energy: dE_Interaction =   -326.66; dE_Complex-Receptor =   -284.14
+However it should be noted that not all structures can be properly minimized within 100 steps. See below for a linking-ring structure
+
+The above minimization calculation will take about 1 hour on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GH. The completed minimization calculation will generate `dock1_omm_rescored_out.pdb` under the work folder `dock1`. With the `-k` option, subfolder `dock1_omm_amber_parm` will be kept under `dock1`. 
+
+To start another minimization, I will do the following two things: 
+
+(1) Write minimized peptide coordinates and docking info into a new file to replace `dock1_out.pdb` in the next minimization
+
+(2) Rename `dock1_omm_amber_parm`, `dock1_omm_rescored_out.pdb` and `dock1_out.pdb` under `dock1`
+
+```shell
+mv dock1/dock1_omm_amber_parm dock1/dock1_omm_amber_parm_1;
+mv dock1/dock1_omm_rescored_out.pdb dock1/dock1_omm_rescored_out_1.pdb;
+mv dock1/dock1_out.pdb dock1/dock1_out_0.pdb;
+```
+
 
 ## Example 3 Advanced Docking: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection
 
