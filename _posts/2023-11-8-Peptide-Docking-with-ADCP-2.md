@@ -36,7 +36,7 @@ peptide-docking/
   + [Docking Calculation](#docking-calculation)
 * [Example 1-2 Basic Minimization: Using OpenMM for a Two-step Minimization](#example-1-2-basic-minimization-using-openmm-for-a-two-step-minimization)
   + [Gas Phase Minimization](#gas-phase-minimization)
-  + [Minimization Preparation](#minimization-preparation)
+  + [2nd Minimization Preparation](#2nd-minimization-preparation)
   + [Minimization with Implicit Solvent](#minimization-with-implicit-solvent)
 
 * [Example 2-1 Interfacing RDKit: Exporting ADCP raw outputs into RDKit Molecules and Using Vina for Local Optimization]
@@ -128,9 +128,9 @@ However, it should be noted that **not all poses can be properly minimized withi
 
 In the 100 processed modes, that seemed to be the only problematic structure that remained unphysical after the 100-step minimization in vacuo. 
 
-The above minimization calculation (-nmin 100 -nitr 100) will take **about 1 hour** on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GH. The completed minimization calculation will generate `dock1_omm_rescored_out.pdb` under the work folder `dock1`. With the `-k` option, subfolder `dock1_omm_amber_parm` will be kept under `dock1`. 
+The above minimization calculation (-nmin 100 -nitr 100 -env vaccum) will take **about 1 hour** on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GH. The completed minimization calculation will generate `dock1_omm_rescored_out.pdb` under the work folder `dock1`. With the `-k` option, subfolder `dock1_omm_amber_parm` will be kept under `dock1`. 
 
-### Minimization Preparation
+### 2nd Minimization Preparation
 
 To start another minimization, I will do the following 3 things: 
 
@@ -250,7 +250,9 @@ In which I set `-nitr` to be 1000. See below for the energy outputs I collected 
 | 2000 | -4896.49 | -4669.85 | -193.37 | -33.27 | -226.64 |
 | 5000 | -4883.27 | -4657.35 | -191.20 | -34.72 | -225.92 |
 
-You will see that the energies, most importantly `dE_Interaction`, became generally invariant after `-nitr` reached 1000. But again we should keep in mind that the required number of minimization steps always depends on how good the initial structure is...  
+You will see that the energies, most importantly `dE_Interaction`, became generally invariant after `-nitr` reached 1000. But again we should keep in mind that the required number of minimization steps always depends on how good the initial structure is... 
+
+The above minimization calculation (-nmin 100 -nitr 1000 -env implicit) will take ??? on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GH. 
 
 ## Example 3 Advanced Docking: Docking a Cyclice Peptide Containing a Disulfide Bond and Pose Selection
 
