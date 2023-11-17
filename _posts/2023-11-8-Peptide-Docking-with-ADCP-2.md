@@ -84,7 +84,7 @@ The above calculation (-N 400 -n 20000000) could take around **1 hours 40 minute
 
 ### Gas Phase Minimization
 
-A completed docking calculation will generate a folder named `dock1` (as specified by the `-o` option in the docking calculation), containing the docking output PDB and DLG files: 
+A completed docking calculation will generate a folder named `dock1`, following the specification by the `-w` option in the docking calculation. `dock1` contains the docking output PDB and DLG files: 
 
 ```
 dock1
@@ -95,38 +95,19 @@ dock1
 For the reported 100 poses (default if not changed by the `-m` option in the docking calculation), we will first perform a **gas phase minimization** to eliminate the bad contacts in the complex and reduce the strain energies within the peptide ligand - 
 
 ```shell
-adcp -k -T 2xpp.trg -s "FFEIF" -pdmin -o dock1 -L swiss -w dock1 -nmin 100 -nitr 100 -env vacuum &> min1.log;
+adcp -k -T 2xpp.trg -s "FFEIF" -pdmin -o dock1 -L swiss -F none -w dock1 -nmin 100 -nitr 100 -env vacuum &> min1.log;
 ```
 
-I set the number of iterations to be 100, as I believe it can yield a reasonable geometry and relatively stable `E_peptide` without changing the docking pose too much. See below for the energy outputs I collected with `-nitr` ranging from 5 to 1000: 
+*With `-F none`, Open MM will use `amber99sb.xml` as the sole source of MM parameters*. See below for the energy outputs I collected with `-nitr` ranging from 5 to 1000, when trying to optimize ADCP output mode #1: 
 
 | nitr | E_Complex | E_Receptor | E_Peptide | dE_Interaction | dE_Complex-Receptor |
 | --- | --- | --- | --- | --- | --- |
-| 5 (Default) | 1038.39 | 676.60 | 562.69 | -200.89 | 361.79 |
-| 10 | -1200.51 | -1317.06 | 305.66 | -189.10 | 116.56 |
-| 25 | -2362.51 | -2218.40 | 103.79 | -247.91 | -144.11 |
-| 50 | -2606.76 | -2429.05 | 87.96 | -265.68 | -177.71 |
-| 100 | -2755.49 | -2552.56 | 82.50 | -285.43 | -202.93 |
-| 500 | -2846.32 | -2569.50 | 79.23 | -356.05 | -276.82 |
-| 1000 | -2865.19 | -2581.05 | 42.53 | -326.66 | -284.14 |
-
-See below for an overlay of minimized structures with `-nitr` equals 5 (green), 25 (magenta), and 100 (yellow): 
-
-![omm-minimize-1](/assets/img/omm-minimize-1.jpg)
-
-When `-nitr` equals 5 (green) or 25 (magenta), the benzene ring of F residue at the N terminal is visibly distorted. This can also be inferred from the high `E_Peptide` values. 
-
-See below for an overlay of minimized structures with `-nitr` equals 100 (yellow), 500 (orange), and 1000 (blue): 
-
-![omm-minimize-2](/assets/img/omm-minimize-2.jpg)
-
-When `-nitr` equals 500 (orange) or 1000 (blue), the conformation and position of the peptide could change. Although `E_Complex` could be minimized even more, the minimization and the energies were computed in *vacuo*, so somewhere between 100 and 500 we should consider **switching the environment to solvent**. 
-
-However, it should be noted that **not all poses can be properly minimized within 100 steps**. For example, the following linking-ring docked pose (light green), which cannot be minimized without substantial conformation change after 5000 steps (dark green): 
-
-![omm-linking-benzene](/assets/img/omm-linking-benzene.jpg)
-
-In the 100 processed modes, that seemed to be the only problematic structure that remained unphysical after the 100-step minimization in vacuo. 
+| 5 | -1067.59 | -1040.95 | 155.91 | -182.55 | -26.64 |
+| 50 | -3153.57 | -2877.75 | -45.18 | -230.65 | -275.82 |
+| 100 | -3249.58 | -2955.32 | -61.74 | -232.53 | -294.26 |
+| 500 | -3308.43 | -2986.80 | -74.44 | -247.20 | -321.64 |
+| 1000 | -3312.91 | -2990.13 | -74.07 | -248.71 | -322.78 |
+| 5000 | -3307.96 | -2985.22 | -74.40 | -248.34 | -322.74 |
 
 The above minimization calculation (-nmin 100 -nitr 100 -env vaccum) will take **about 1 hour** on a 40-core Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GH. The completed minimization calculation will generate `dock1_omm_rescored_out.pdb` under the work folder `dock1`. With the `-k` option, subfolder `dock1_omm_amber_parm` will be kept under `dock1`. 
 
