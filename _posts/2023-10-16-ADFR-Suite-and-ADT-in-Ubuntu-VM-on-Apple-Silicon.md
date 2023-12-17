@@ -253,7 +253,7 @@ Then, obtain the source codes from the repository for program reduce -
 git clone https://github.com/rlabduke/reduce
 ```
 
-You may simply navigate to the folder `reduce`, and run the following commands to make it with the template `Makefile`. By default, the executable will be placed under `~/bin/` but these are all customizable with `cmake`. 
+You may simply navigate to the folder `reduce`, and run the following commands to make it with the template `Makefile`. By default, the executable will be placed under `/usr/local/bin/` but these are all customizable with `cmake`. 
 
 ```shell
 cd reduce
