@@ -10,7 +10,10 @@ image: adfr-in-VM.jpg
 # Intro
 
 
-This guide describes the procedure to set up a Linux [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine) to run various Linux programs in the ADCP suite, now provided in a self-contained [micromamba environment](https://mamba.readthedocs.io/en/latest/user_guide/concepts.html). Graphical programs such as AGFRGUI can be used through a desktop of the VM. For Mac computers with [Apple Silicon (M1/M2)](https://en.wikipedia.org/wiki/Apple_silicon) that use the [ARM64](https://en.wikipedia.org/wiki/AArch64) architecture, the [Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)) compatibility layer can be enabled within the ARM64 VM to run the [AMD64 (x86_64)](https://en.wikipedia.org/wiki/X86-64) programs without a full emulation. 
+This post is a guide to setting up a [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine) for various [Linux](https://en.wikipedia.org/wiki/Linux) [x86_64]
+(https://en.wikipedia.org/wiki/X86-64) programs in the ADCP suite, now provided in a self-contained [micromamba environment](https://mamba.readthedocs.io/en/latest/user_guide/concepts.html). 
+
+Following the outlined instructions, a desktop will be installed for the VM. Graphical programs such as AGFRGUI can be used through the desktop. Furthermore, on Mac computers with [Apple Silicon (M1/M2)](https://en.wikipedia.org/wiki/Apple_silicon) that use the [ARM64](https://en.wikipedia.org/wiki/AArch64) architecture, [Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)) can be enabled within the ARM64 VM as a compatibility layer to run the AMD64 (x86_64) programs. 
 
 This post is adapted from a previous post on [running the ADFR suite and ADT](https://rwxayheee.github.io/ADFR-Suite-and-ADT-in-Ubuntu-VM-on-Apple-Silicon) in the same setting, with the add-on of configuring an environment containing AMD64 Python packages using ARM64 micromamba, to minimize the amount of emulation for better performance. 
 
@@ -29,15 +32,16 @@ This post is adapted from a previous post on [running the ADFR suite and ADT](ht
 * [Step 3: Enabling the *Multiarch* and *Multilib* Support](#step-3-enabling-the-multiarch-and-multilib-support)
   + [*Multiarch*: Update /etc/apt/sources.list and add AMD64 as a foreign arch to dpkg](#multiarch-update-etcaptourceslist-and-add-amd64-as-a-foreign-arch-to-dpkg)
   + [*Multilib*: Install specific AMD64 libraries for the ADCP suite and AGFRGUI](#multilib-install-specific-amd64-libraries-for-the-adcp-suite-and-agfrgui)
-* [Step 4: Installing the ADFR Suite and MGLTools](#step-4-installing-the-adfr-suite-and-mgltools)
+* [Step 4: Installing micromamba, the ADCP Suite and reduce](#step-4-installing-the-adcp-suite-and-reduce)
+  + [Install micromamba]
+  + [Install the ADCP Suite]
   + [Make program reduce from source](#make-program-reduce-from-source)
-  + [Tests with sample data](#tests-with-sample-data)
 
 
 
 ## Step 1: Setting up a Ubuntu VM in UTM
 
-UTM is a free application to create virtual machines on Mac with support for Apple Silicon. Ubuntu is a free & open Linux operating system that we will be using for our VM. To begin with, we will **set up a Ubuntu VM in UTM with the desired features to enable Rosetta emulation**. 
+UTM is a free application to create virtual machines on Mac with support for Apple Silicon. Ubuntu is a free, open Linux operating system that we will be using for our VM. To begin with, we will **set up a Ubuntu VM in UTM with the desired features to enable Rosetta emulation**. 
 
 ### Download UTM and the disk image (ISO file) of Ubuntu-for-ARM
 
@@ -137,7 +141,7 @@ sudo /usr/sbin/update-binfmts --install rosetta /media/rosetta/rosetta \
 --magic "\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00" \
 --mask "\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff" \
 --credentials yes --preserve no --fix-binary yes
-```
+```pyt
 
 At this point, it should be possible to run x86_64 executables with Rosetta if additional AMD64 libraries are not necessary. Optionally, as instructed in [the linked post](https://mybyways.com/blog/using-rosetta-in-a-utm-linux-vm-with-docker-on-apple-silicon), you may do the Docker Test and check if Docker is able to use Rosetta to run simple x86_64 programs. 
 
@@ -180,25 +184,23 @@ sudo apt update
 
 ### *Multilib*: Install specific AMD64 libraries for the ADCP suite and AGFRGUI
 
-For **agfr & adfr**, the following packages seem necessary and can be installed by - 
+To begin with, the following is needed prior to `pip install` the linux-64 packages: 
 
 ```shell
-sudo apt-get install libc6:amd64 libsm6:amd64 libx11-dev:amd64 libxml2:amd64 libgomp1:amd64
+sudo apt-get install -y binutils:amd64
 ```
 
-With the above, you should be able to install **the ADFR suite** and run `agfr` and `adfr` normally. 
-
-For **agfrgui**, the following packages can be installed by - 
+For **AGFRGUI**, the following packages seem necessary and can be installed by - 
 
 ```shell
-sudo apt-get install libxtst6:amd64 libgl1:amd64 libglu1:amd64 libxmu6:amd64 libxi6:amd64
+sudo apt-get install -y libgl1:amd64 libglu1:amd64 libxmu6:amd64 libxi6:amd64 libdbus-1-3:amd64 libxkbcommon-x11-dev:amd64
+sudo apt-get install -y --reinstall libxcb-*:amd64
 ```
 
-With the above, you should be able to use `agfrgui`. At this point, you should also be able to install **MGLTools** and use `adt`. 
+With the above, you should be able to install **the ADCP suite** and launch `agfr`, `adfr`, and `agfrgui` normally. 
 
 
-
-## Step 4: Installing the ADFR Suite and MGLTools
+## Step 4: Installing the ADCP Suite and reduce
 
 ADFR suite (v1.0 rc1 for Linux, tarball installer) - <a href="https://ccsb.scripps.edu/adfr/downloads/" target="_blank">https://ccsb.scripps.edu/adfr/downloads/</a>
 
@@ -238,97 +240,6 @@ sudo make install
 ```
 
 At this point, you should be able to complete the tasks in the ADCP tutorial with a recent version of `reduce`. 
-
-
-
-### Tests with sample data
-
-Below are tables of total time used to complete sample calculations in the tutorials - 
-
-(1) ADFR's [re-docking tutorial](https://ccsb.scripps.edu/adfr/tutorial-redocking/)
-
-*Generate the target file containing the affinity maps*
-
-```shell
-agfr -r data/4EK3_rec.pdbqt -l data/4EK4_lig.pdbqt -o ligPocket
-```
-
-| Process printed | Time used |
-| --- | --- |
-| identifying pockets using AutoSite .... | 0.58 (sec) |
-| computing maps ... | 1.08 (sec) |
-| adding gradient to maps | 6.22 (sec) |
-| total | 7.89 (sec) |
-
-*Dock the randomized ligand using the generated target file*
-
-```shell
-adfr -l data/4EK4_random.pdbqt -t ligPocket.trg --jobName rigid --nbRuns 8 --maxEvals 20000 -O --seed 1
-```
-
-| Process printed | Time used |
-| --- | --- |
-| Docking performed in | 3.11 (sec) |
-
-(2) ADCP's [re-docking tutorial](https://ccsb.scripps.edu/adcp/tutorial-redocking/)
-
-*Generate the target file containing the affinity maps*
-
-```shell
-agfr -r 3Q47_recH.pdbqt -l 3Q47_pepH.pdbqt -asv 1.1 -o 3Q47
-```
-
-| Process printed | Time used |
-| --- | --- |
-| identifying pockets using AutoSite .... | 2.90 (sec) |
-| computing maps ... | 2.25 (sec) |
-| adding gradient to maps | 19.70 (sec) |
-| total | 23.36 (sec) |
-
-*Dock the peptide from sequence using the generated target file*
-
-```shell
-adcp -t 3Q47.trg -s npisdvd -N 20 -n 1000000 -o 3Q47_redocking -ref 3Q47_pepH.pdb
-```
-
-| Process printed | Time used |
-| --- | --- |
-| Docking performed in | 179.30 (sec) |
-
-For the above calculations, **4 cores & max. 4 GB RAM** were allocated to the VM built by the presented procedure. The device used is **Apple M1 Pro (16-inch, 2021)**. 
-
-
-
-### Compare with running ADCP on native Linux OS
-
-Below is a bit of benchmark timing I did to compare the performance of the UTM VM to running ADCP on native Linux OS. The reference Intel hardware is **Intel(R) Xeon(R) CPU E5-2680 v4**, accessed through [the Ohio Supercomputer Center's Owens cluster](https://www.osc.edu/resources/technical_support/supercomputers/owens). 
-
-*Re-docking the 7-mer*
-
-```shell
-adcp -t 3Q47.trg -s npisdvd -N 1 -n 21000000 -o 3Q47_redocking -ref 3Q47_pepH.pdb
-```
-
-| UTM VM | Owens sinteractive |
-| --- | --- |
-| 491.39 (sec) | 644.72 (sec) |
-
-*Re-docking a 5-mer*
-
-```shell
-adcp -t 3Q47.trg -s isdvd -N 1 -n 15000000 -o 3Q47_redocking -ref 3Q47_5merH.pdb
-```
-
-| UTM VM | Owens sinteractive |
-| --- | --- |
-| 229.03 (sec) | 312.35 (sec) |
-
-*Notes*
-
-* On Owens, running the docking job through sinteractive (interactive computing) or in batch takes equal amount of time. 
-* The timing of a single GA run is generally invariant with number of cores allocated to the job. When `-N` is larger than 1, the GA runs may be distributed across several cores. If you are running it in a VM or Docker, the performance may also depend on the virtualization. 
-* The `-n` number is the upper bound of steps, so the timing may be related to, but isn’t proportional to `-n`. The timing for a single GA run is generally invariant with number of allocated cores. 
-
 
 
 ## Contact
