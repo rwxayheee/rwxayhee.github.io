@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "ADCP Suite in Ubuntu VM on Apple Silicon"
+title: "ADCP Suite and AGFRGUI in Ubuntu VM on Apple Silicon"
 author: "rwxayheee"
 categories: journal
 tags: [documentation]
-image: adfr-in-VM.jpg
+image: agfrgui-in-VM.jpg
 ---
 
 # Intro
@@ -286,7 +286,7 @@ At present, agfrgui doesn't see libraries in `micromamba/envs/envs/adcpsuite/lib
 export LD_LIBRARY_PATH=/home/he1768/micromamba/envs/adcpsuite/lib
 ```
 
-It is recommended to unset or undo the changes to LD_LIBRARY_PATH when not using agfrgui. 
+It is recommended to unset or undo the changes to LD_LIBRARY_PATH when not using agfrgui.
 
 
 ## Contact
