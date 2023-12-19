@@ -10,8 +10,7 @@ image: adcp-agfrgui-in-VM.jpg
 # Intro
 
 
-This post is a guide to setting up a [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine) for various [Linux](https://en.wikipedia.org/wiki/Linux) [x86_64]
-(https://en.wikipedia.org/wiki/X86-64) programs in the ADCP suite, now provided in a self-contained [micromamba environment](https://mamba.readthedocs.io/en/latest/user_guide/concepts.html). 
+This post is a guide to setting up a [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine) for various [Linux](https://en.wikipedia.org/wiki/Linux) [x86_64](https://en.wikipedia.org/wiki/X86-64) programs in the ADCP suite, now provided in a self-contained [micromamba environment](https://mamba.readthedocs.io/en/latest/user_guide/concepts.html). 
 
 Following the outlined instructions, a desktop will be installed for the VM. Graphical programs such as AGFRGUI can be used through the desktop. Furthermore, on Mac computers with [Apple Silicon (M1/M2)](https://en.wikipedia.org/wiki/Apple_silicon) that use the [ARM64](https://en.wikipedia.org/wiki/AArch64) architecture, [Rosetta](https://en.wikipedia.org/wiki/Rosetta_(software)) can be enabled within the ARM64 VM as a compatibility layer to run the AMD64 (x86_64) programs. 
 
