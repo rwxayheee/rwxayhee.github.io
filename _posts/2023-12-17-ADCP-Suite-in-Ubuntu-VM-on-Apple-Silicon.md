@@ -33,9 +33,10 @@ This post is adapted from a previous post on [running the ADFR suite and ADT](ht
   + [*Multiarch*: Update /etc/apt/sources.list and add AMD64 as a foreign arch to dpkg](#multiarch-update-etcaptourceslist-and-add-amd64-as-a-foreign-arch-to-dpkg)
   + [*Multilib*: Install specific AMD64 libraries for the ADCP suite and AGFRGUI](#multilib-install-specific-amd64-libraries-for-the-adcp-suite-and-agfrgui)
 * [Step 4: Installing micromamba, the ADCP Suite and reduce](#step-4-installing-micromamba-the-adcp-suite-and-reduce)
-  + [Install micromamba]
-  + [Install the ADCP Suite]
+  + [Install micromamba](#install-micromamba)
+  + [Install the ADCP Suite](#install-the-adcp-suite)
   + [Make program reduce from source](#make-program-reduce-from-source)
+  + [Incorporate micromamba/envs/envs/adcpsuite/lib into LD_LIBRARY_PATH](#incorporate-micromambaenvsenvsadcpsuitelib-into-ld_library_path)
 
 
 
@@ -141,7 +142,7 @@ sudo /usr/sbin/update-binfmts --install rosetta /media/rosetta/rosetta \
 --magic "\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00" \
 --mask "\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff" \
 --credentials yes --preserve no --fix-binary yes
-```pyt
+```
 
 At this point, it should be possible to run x86_64 executables with Rosetta if additional AMD64 libraries are not necessary. Optionally, as instructed in [the linked post](https://mybyways.com/blog/using-rosetta-in-a-utm-linux-vm-with-docker-on-apple-silicon), you may do the Docker Test and check if Docker is able to use Rosetta to run simple x86_64 programs. 
 
@@ -203,7 +204,7 @@ sudo apt-get install -y --reinstall libxcb-*:amd64
 In the last section of this guide, we will install the following items step-by-step: 
 + micromamba (ARM64)
 + the python packages (x86_64) that belong to or needed by the ADCP suite, and 
-+ a recent build of reduce from source, to replace the [i386](https://en.wikipedia.org/wiki/I386) reduce executable that is shipped with the ADCP suite. 
++ a recent build of reduce (ARM64) from source, to replace the [i386](https://en.wikipedia.org/wiki/I386) reduce executable that is shipped with the ADCP suite. 
 
 
 ### Install micromamba
@@ -239,7 +240,7 @@ yes | CONDA_SUBDIR=linux-64 micromamba create -n $env_name python=3.7 -c conda-f
 # Install Dependent Python Packages
 micromamba activate $env_name;
 yes | CONDA_SUBDIR=linux-64 micromamba install setuptools=59.8.0 numpy=1.21.6 openbabel=2.4.1 openmm=7.6.0 parmed=3.4.3 mmtf-python=1.1.3 pdbfixer=1.8.1  -c conda-forge --no-rc
-# Get ld?
+
 
 # Install AutoDock Python Packages
 python -m pip install  Pillow==9.5.0 pyside2==5.15.2.1 pybel==0.15.5 biopython==1.81 pypdb==2.3 wget | grep -v "Requirement already satisfied"
@@ -251,13 +252,10 @@ At this point, it should be possible to launch `adfr`, `agfr` and `agfrgui` norm
 
 ### Make program reduce from source
 
-If you also wish to **build program reduce from source**, the following might be needed prior to the making: 
+Install `g++`, the default compiler to build program `reduce` - 
 
 ```shell
-sudo apt-get install cmake
-sudo apt-get install gcc-multilib
-sudo apt-get install gcc g++
-sudo apt-get install python3-dev
+sudo apt-get install -y g++
 ```
 
 Then, obtain the source codes from the repository for program reduce - 
@@ -274,7 +272,21 @@ make
 sudo make install
 ```
 
-At this point, you should be able to complete the tasks in the ADCP tutorial with a recent version of `reduce`. 
+At this point, you should be able find and use this ARM64 reduce executable. Replace `~/micromamba/envs/adcpsuite/bin/reduce` by `/usr/local/bin/reduce` to support dependent functions in AGFRGUI - 
+
+```shell
+cp /usr/local/bin/reduce /home/he1768/micromamba/envs/adcpsuite/bin/
+```
+
+### Incorporate micromamba/envs/envs/adcpsuite/lib into LD_LIBRARY_PATH
+
+At present, agfrgui doesn't see libraries in `micromamba/envs/envs/adcpsuite/lib`, unless incorporated in `LD_LIBRARY_PATH`. Therefore, setting `LD_LIBRARY_PATH` is neccessary to launch agfrgui -
+
+```shell
+export LD_LIBRARY_PATH=/home/he1768/micromamba/envs/adcpsuite/lib
+```
+
+It is recommended to unset or undo the changes to LD_LIBRARY_PATH when not using agfrgui. 
 
 
 ## Contact
