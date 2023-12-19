@@ -32,7 +32,7 @@ This post is adapted from a previous post on [running the ADFR suite and ADT](ht
 * [Step 3: Enabling the *Multiarch* and *Multilib* Support](#step-3-enabling-the-multiarch-and-multilib-support)
   + [*Multiarch*: Update /etc/apt/sources.list and add AMD64 as a foreign arch to dpkg](#multiarch-update-etcaptourceslist-and-add-amd64-as-a-foreign-arch-to-dpkg)
   + [*Multilib*: Install specific AMD64 libraries for the ADCP suite and AGFRGUI](#multilib-install-specific-amd64-libraries-for-the-adcp-suite-and-agfrgui)
-* [Step 4: Installing micromamba, the ADCP Suite and reduce](#step-4-installing-the-adcp-suite-and-reduce)
+* [Step 4: Installing micromamba, the ADCP Suite and reduce](#step-4-installing-micromamba-the-adcp-suite-and-reduce)
   + [Install micromamba]
   + [Install the ADCP Suite]
   + [Make program reduce from source](#make-program-reduce-from-source)
@@ -197,22 +197,57 @@ sudo apt-get install -y libgl1:amd64 libglu1:amd64 libxmu6:amd64 libxi6:amd64 li
 sudo apt-get install -y --reinstall libxcb-*:amd64
 ```
 
-With the above, you should be able to install **the ADCP suite** and launch `agfr`, `adfr`, and `agfrgui` normally. 
+
+## Step 4: Installing micromamba, the ADCP Suite and reduce
+
+In the last section of this guide, we will install the following items step-by-step: 
++ micromamba (ARM64)
++ the python packages (x86_64) that belong to or needed by the ADCP suite, and 
++ a recent build of reduce from source, to replace the [i386](https://en.wikipedia.org/wiki/I386) reduce executable that is shipped with the ADCP suite. 
 
 
-## Step 4: Installing the ADCP Suite and reduce
+### Install micromamba
 
-ADFR suite (v1.0 rc1 for Linux, tarball installer) - <a href="https://ccsb.scripps.edu/adfr/downloads/" target="_blank">https://ccsb.scripps.edu/adfr/downloads/</a>
+Following the [official installation guide](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html), install the ARM64 micromamba - 
 
-MGLTools (v1.5.7 for Linux) - <a href="https://ccsb.scripps.edu/mgltools/downloads/" target="_blank">https://ccsb.scripps.edu/mgltools/downloads/</a>
+```shell
+curl -Ls https://micro.mamba.pm/api/micromamba/linux-aarch64/latest | tar -xvj bin/micromamba
+```
 
-If interested, official tutorials and data files are available for trial calculations at: 
+Then add micromamba initialization to `~/bashrc` - 
 
-For ADFR - <a href="https://ccsb.scripps.edu/adfr/documentation/" target="_blank">https://ccsb.scripps.edu/adfr/documentation/</a> 
+```shell
+./bin/micromamba shell init -s bash -p ~/micromamba
+```
 
-For ADCP - <a href="https://ccsb.scripps.edu/adcp/documentation/" target="_blank">https://ccsb.scripps.edu/adcp/documentation/</a>
+Lastly, restart terminal or source the modified `~/bashrc` to apply changes to the running session - 
+
+```shell
+source ~/.bashrc
+```
 
 
+#### Install the ADCP Suite
+
+```shell
+# Create micromamba Env adcpsuite
+micromamba deactivate;
+env_name='adcpsuite';
+yes | CONDA_SUBDIR=linux-64 micromamba create -n $env_name python=3.7 -c conda-forge --no-rc
+
+
+# Install Dependent Python Packages
+micromamba activate $env_name;
+yes | CONDA_SUBDIR=linux-64 micromamba install setuptools=59.8.0 numpy=1.21.6 openbabel=2.4.1 openmm=7.6.0 parmed=3.4.3 mmtf-python=1.1.3 pdbfixer=1.8.1  -c conda-forge --no-rc
+# Get ld?
+
+# Install AutoDock Python Packages
+python -m pip install  Pillow==9.5.0 pyside2==5.15.2.1 pybel==0.15.5 biopython==1.81 pypdb==2.3 wget | grep -v "Requirement already satisfied"
+python -m pip install --no-cache-dir  --upgrade adcp adfrcc autosite dejavu2 gle mglutil mslib opengltk prody support volume adfr appframework bhtree geomutils mglkey molkit2 mslibcom pmvapp pyglf utpackages  --index-url https://ccsb.scripps.edu/mamba/pip/py37/ | grep -v "Requirement already satisfied"
+python -m pip install --no-cache-dir --upgrade autodocktools  molkit  pybabel --index-url https://ccsb.scripps.edu/mamba/pip/py37/legacy/ | grep -v "Requirement already satisfied"
+```
+
+At this point, it should be possible to launch `adfr`, `agfr` and `agfrgui` normally. However, the residue repair functions in `agfrgui` depend on a working `reduce` executable at ``, which is i386. Without enabling the additional support for i386 which may not be so worthy, we will make a more recent build from source. 
 
 ### Make program reduce from source
 
