@@ -4,7 +4,7 @@ title: "ADCP Suite and AGFRGUI in Ubuntu VM on Apple Silicon"
 author: "rwxayheee"
 categories: journal
 tags: [documentation]
-image: agfrgui-in-VM.jpg
+image: adcp-gfrgui-in-VM.jpg
 ---
 
 # Intro
