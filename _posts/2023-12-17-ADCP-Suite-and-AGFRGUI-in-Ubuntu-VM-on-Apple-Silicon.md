@@ -247,14 +247,14 @@ python -m pip install --no-cache-dir  --upgrade adcp adfrcc autosite dejavu2 gle
 python -m pip install --no-cache-dir --upgrade autodocktools  molkit  pybabel --index-url https://ccsb.scripps.edu/mamba/pip/py37/legacy/ | grep -v "Requirement already satisfied"
 ```
 
-At this point, it should be possible to launch *adfr*, *agfr* and *agfrgui* normally. However, the residue repair functions in *agfrgui* expect a working *reduce* executable at `~/micromamba/envs/adcpsuite/bin/`, which is i386 an not currently supported by our VM. Without enabling the additional support for i386 which may be not so worthy, we will make a more recent build from source. 
+At this point, it should be possible to launch *adfr*, *agfr* and *agfrgui* normally. However, the residue repair functions in *agfrgui* expect a working *reduce* executable at `~/micromamba/envs/adcpsuite/bin/`, which is i386 – not currently supported by our VM. Without enabling the additional support for i386 which may be not so worthy, we will make a more recent build from source. 
 
 ### Make program reduce from source
 
 Install **g++**, the default compiler to build program *reduce* - 
 
 ```shell
-sudo apt-get install -y g++
+sudo apt-get install -y make g++
 ```
 
 Then, obtain the source codes from the official repository of *reduce* - 
