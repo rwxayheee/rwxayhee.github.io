@@ -274,7 +274,7 @@ sudo make install
 At this point, you should be able find and use this ARM64 *reduce* executable. Replace `~/micromamba/envs/adcpsuite/bin/reduce` by `/usr/local/bin/reduce` to support dependent functions in *agfrgui* - 
 
 ```shell
-cp /usr/local/bin/reduce /home/he1768/micromamba/envs/adcpsuite/bin/
+cp /usr/local/bin/reduce ~/micromamba/envs/adcpsuite/bin/
 ```
 
 ### Incorporate micromamba/envs/envs/adcpsuite/lib into LD_LIBRARY_PATH
@@ -282,7 +282,7 @@ cp /usr/local/bin/reduce /home/he1768/micromamba/envs/adcpsuite/bin/
 At present, *agfrgui* doesn't see libraries in `micromamba/envs/envs/adcpsuite/lib`, unless incorporated in `LD_LIBRARY_PATH`. Therefore, setting `LD_LIBRARY_PATH` is neccessary to launch *agfrgui* -
 
 ```shell
-export LD_LIBRARY_PATH=/home/he1768/micromamba/envs/adcpsuite/lib
+export LD_LIBRARY_PATH=$HOME/micromamba/envs/adcpsuite/lib
 ```
 
 It is recommended to unset or undo the changes to `LD_LIBRARY_PATH` when not using *agfrgui*.
