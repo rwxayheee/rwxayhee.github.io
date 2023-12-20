@@ -251,7 +251,7 @@ At this point, it should be possible to launch *adfr*, *agfr* and *agfrgui* norm
 
 ### Make program reduce from source
 
-Install **g++**, the default compiler to build program *reduce* - 
+Install **make and g++**, the default compiler to build program *reduce* - 
 
 ```shell
 sudo apt-get install -y make g++
