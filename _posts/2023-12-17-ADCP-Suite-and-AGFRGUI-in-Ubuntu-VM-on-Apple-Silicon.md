@@ -149,7 +149,7 @@ At this point, it should be possible to run x86_64 executables with Rosetta if a
 
 ## Step 3: Enabling the *Multiarch* and *Multilib* Support
 
-Although very briefly summarized as just _enabling “multiarch” or “multilib” support_ in the UTM documentation for Rosetta, it is crucial to ensure the x86_64 programs have the required AMD64 libraries and the list of libraries can be software-specific. In this step, we will first **update the list of sources** for such available packages and **add AMD64 as a foreign architecture** to Ubuntu's package manager, `dpkg`. Then, we will **install some essential AMD64 libraries and the specific ones** needed by the programs in the ADCP suite. 
+Although very briefly summarized as just _enabling “multiarch” or “multilib” support_ in the UTM documentation for Rosetta, it is crucial to ensure the x86_64 programs have the required AMD64 libraries and the list of libraries can be software-specific. In this step, we will first **update the list of sources** for such available packages and **add AMD64 as a foreign architecture** to Ubuntu's package manager, `dpkg`. Then, we will **install some essential AMD64 libraries and the specific ones** needed by the ADCP suite. 
 
 
 
@@ -201,9 +201,9 @@ sudo apt-get install -y --reinstall libxcb-*:amd64
 ## Step 4: Installing micromamba, the ADCP Suite and reduce
 
 In the last section of this guide, we will install the following items step-by-step: 
-+ micromamba (ARM64)
-+ the python packages (x86_64) that belong to or needed by the ADCP suite, and 
-+ a recent build of reduce (ARM64) from source, to replace the [i386](https://en.wikipedia.org/wiki/I386) reduce executable that is shipped with the ADCP suite. 
++ **micromamba (ARM64)**
++ **the python packages (x86_64)** that belong to or needed by the ADCP suite, and 
++ **a recent build of reduce (ARM64)** from source, to replace the [i386](https://en.wikipedia.org/wiki/I386) reduce executable that is shipped with the ADCP suite. 
 
 
 ### Install micromamba
@@ -247,23 +247,23 @@ python -m pip install --no-cache-dir  --upgrade adcp adfrcc autosite dejavu2 gle
 python -m pip install --no-cache-dir --upgrade autodocktools  molkit  pybabel --index-url https://ccsb.scripps.edu/mamba/pip/py37/legacy/ | grep -v "Requirement already satisfied"
 ```
 
-At this point, it should be possible to launch `adfr`, `agfr` and `agfrgui` normally. However, the residue repair functions in `agfrgui` depend on a working `reduce` executable at ``, which is i386. Without enabling the additional support for i386 which may not be so worthy, we will make a more recent build from source. 
+At this point, it should be possible to launch *adfr*, *agfr* and *agfrgui* normally. However, the residue repair functions in *agfrgui* expect a working *reduce* executable at `~/micromamba/envs/adcpsuite/bin/`, which is i386 an not currently supported by our VM. Without enabling the additional support for i386 which may be not so worthy, we will make a more recent build from source. 
 
 ### Make program reduce from source
 
-Install `g++`, the default compiler to build program `reduce` - 
+Install **g++**, the default compiler to build program *reduce* - 
 
 ```shell
 sudo apt-get install -y g++
 ```
 
-Then, obtain the source codes from the repository for program reduce - 
+Then, obtain the source codes from the official repository of *reduce* - 
 
 ```shell
 git clone https://github.com/rlabduke/reduce
 ```
 
-You may simply navigate to the folder `reduce`, and run the following commands to make it with the template `Makefile`. By default, the executable will be placed under `/usr/local/bin/` but these are all customizable with `cmake`. 
+Next, simply navigate to the folder `reduce`, and run `make` commands with the template `Makefile`. By default, the executable will be placed under `/usr/local/bin/` but these are all customizable with `cmake`. 
 
 ```shell
 cd reduce
@@ -271,7 +271,7 @@ make
 sudo make install
 ```
 
-At this point, you should be able find and use this ARM64 reduce executable. Replace `~/micromamba/envs/adcpsuite/bin/reduce` by `/usr/local/bin/reduce` to support dependent functions in AGFRGUI - 
+At this point, you should be able find and use this ARM64 *reduce* executable. Replace `~/micromamba/envs/adcpsuite/bin/reduce` by `/usr/local/bin/reduce` to support dependent functions in *agfrgui* - 
 
 ```shell
 cp /usr/local/bin/reduce /home/he1768/micromamba/envs/adcpsuite/bin/
@@ -279,13 +279,13 @@ cp /usr/local/bin/reduce /home/he1768/micromamba/envs/adcpsuite/bin/
 
 ### Incorporate micromamba/envs/envs/adcpsuite/lib into LD_LIBRARY_PATH
 
-At present, agfrgui doesn't see libraries in `micromamba/envs/envs/adcpsuite/lib`, unless incorporated in `LD_LIBRARY_PATH`. Therefore, setting `LD_LIBRARY_PATH` is neccessary to launch agfrgui -
+At present, *agfrgui* doesn't see libraries in `micromamba/envs/envs/adcpsuite/lib`, unless incorporated in `LD_LIBRARY_PATH`. Therefore, setting `LD_LIBRARY_PATH` is neccessary to launch *agfrgui* -
 
 ```shell
 export LD_LIBRARY_PATH=/home/he1768/micromamba/envs/adcpsuite/lib
 ```
 
-It is recommended to unset or undo the changes to LD_LIBRARY_PATH when not using agfrgui.
+It is recommended to unset or undo the changes to `LD_LIBRARY_PATH` when not using *agfrgui*.
 
 
 ## Contact
